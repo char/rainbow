@@ -5,6 +5,7 @@ import { post } from "../state/post-store.ts";
 import { elem } from "../util/elem.ts";
 import { select } from "../util/select.ts";
 import { app } from "./_ui.ts";
+import { feedReply } from "./post.ts";
 import { richText } from "./rich-text.ts";
 
 export function profileDetails(
@@ -54,7 +55,12 @@ export function profileTimeline(actor: string): HTMLElement {
     })
     .then(({ data: feedView }) => {
       for (const postView of feedView.feed) {
-        section.append(post(postView.post, postView).article);
+        section.append(
+          post(
+            postView.post,
+            postView.reply?.parent ? feedReply(postView.reply.parent) : undefined,
+          ).article,
+        );
       }
     });
 
