@@ -63,8 +63,10 @@ export function post(
     "article",
     { className: "post" },
     [
-      elem("a", { className: "contents", href: `/profile/${author.handle ?? author.did}` }, [
-        elem("img", { className: "avatar", src: author.avatar }),
+      elem("aside", {}, [
+        elem("a", { className: "contents", href: `/profile/${author.handle ?? author.did}` }, [
+          elem("img", { className: "avatar", src: author.avatar }),
+        ]),
       ]),
       elem("section", {}, [
         elem("div", { className: "topline" }, [

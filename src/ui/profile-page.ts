@@ -46,7 +46,7 @@ export function profileDetails(
 }
 
 export function profileTimeline(actor: string): HTMLElement {
-  const section = elem("section");
+  const section = elem("section", { className: "timeline" });
 
   session!.xrpc
     .get("app.bsky.feed.getAuthorFeed", {
