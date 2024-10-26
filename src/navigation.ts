@@ -53,8 +53,8 @@ document.addEventListener("click", e => {
 
   e.preventDefault();
 
-  route.set(parseRoute(url.pathname));
   history.pushState(null, "", url.pathname);
+  route.set(parseRoute(url.pathname));
 });
 
 window.addEventListener("popstate", () => {

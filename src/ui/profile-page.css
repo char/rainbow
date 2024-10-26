@@ -12,10 +12,11 @@
       margin: 0 -0.5em;
       object-fit: cover;
       aspect-ratio: 3 / 1;
+      border-radius: 8px;
     }
 
     .avatar {
-      margin-top: -4em;
+      margin-top: -6em;
       height: 8em;
 
       border: 4px solid rgb(var(--col-bg-0) / 1);

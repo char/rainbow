@@ -33,6 +33,13 @@ a.handle {
   color: rgb(var(--col-fg-muted) / 1);
 }
 
+a.link {
+  color: rgb(var(--col-accent) / 1);
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 img.avatar:not([src]) {
   background-image: linear-gradient(gray, white);
 }
