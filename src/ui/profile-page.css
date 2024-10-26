@@ -29,6 +29,9 @@
   }
 
   #numbers {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5em;
     color: rgb(var(--col-fg-1) / 1);
 
     data {

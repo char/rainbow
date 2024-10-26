@@ -22,18 +22,21 @@ export function profileDetails(
     ]),
 
     elem("section", { id: "numbers" }, [
-      elem("a", { href: `/profile/${actor}/followers` }, [
-        elem("data", {}, [`${profile.followersCount}`]),
-        ` followers`,
+      elem("span", {}, [
+        elem("a", { href: `/profile/${actor}/followers` }, [
+          elem("data", {}, [`${profile.followersCount}`]),
+          ` followers`,
+        ]),
       ]),
       " ",
-      elem("a", { href: `/profile/${actor}/following` }, [
-        elem("data", {}, [`${profile.followsCount}`]),
-        ` following`,
+      elem("span", {}, [
+        elem("a", { href: `/profile/${actor}/following` }, [
+          elem("data", {}, [`${profile.followsCount}`]),
+          ` following`,
+        ]),
       ]),
       " ",
-      elem("data", {}, [`${profile.postsCount}`]),
-      ` posts`,
+      elem("span", {}, [elem("data", {}, [`${profile.postsCount}`]), ` posts`]),
     ]),
 
     profile.description ? richText(profile.description) : "",

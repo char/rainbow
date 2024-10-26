@@ -1,8 +1,9 @@
 import type { AppBskyFeedDefs, AppBskyFeedPost } from "@atcute/client/lexicons";
 import { navigateTo } from "../navigation.ts";
 import { elem } from "../util/elem.ts";
-import { Ellipsis, Heart, icon, MessageCircle, Recycle, Reply } from "../util/icons.ts";
+import { Ellipsis, Heart, icon, MessageCircle, Repeat2, Reply } from "../util/icons.ts";
 import { formatRelativeTime } from "../util/temporal.ts";
+import { embed } from "./embed.ts";
 import { richText } from "./rich-text.ts";
 
 function replyAuthor(reply: AppBskyFeedDefs.ReplyRef): HTMLElement {
@@ -63,13 +64,14 @@ export function post(
           ])
         : "",
       richText(record.text, record.facets),
+      post.embed ? embed(post.embed) : "",
       elem("section", { className: "controls" }, [
         elem("button", { className: "reply" }, [
           icon(MessageCircle),
           elem("data", {}, [`${post.replyCount ?? 0}`]),
         ]),
         elem("button", { className: "repost" }, [
-          icon(Recycle),
+          icon(Repeat2),
           elem("data", {}, [`${post.repostCount ?? 0}`]),
         ]),
         elem("button", { className: "like" }, [

@@ -1,4 +1,6 @@
 .post {
+  overflow: clip;
+
   cursor: pointer;
 
   display: flex;
@@ -27,6 +29,7 @@
   }
 
   .avatar {
+    pointer-events: all;
     height: 46px;
   }
 
@@ -80,13 +83,16 @@
   font-size: smaller;
 
   button {
+    --color: 255 255 255;
+
     display: flex;
     align-items: center;
     padding: 0.5em;
     border-radius: 8px;
 
     &:hover {
-      background-color: rgb(var(--col-bg-3) / 1);
+      background-color: rgb(var(--color) / 0.1);
+      color: rgb(var(--color) / 1);
     }
 
     & > svg {
@@ -98,5 +104,33 @@
     &:not(:has(data)) > svg {
       margin: 0;
     }
+  }
+
+  .like {
+    --color: 255 127 127;
+  }
+  .repost {
+    --color: 127 255 127;
+  }
+  .reply {
+    --color: var(--col-accent);
+  }
+}
+
+.post .embed {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 1em;
+  margin: 0.5em 0;
+
+  &.images img {
+    border: 1px solid rgb(var(--col-bg-3) / 1);
+    border-radius: 8px;
+
+    width: 100%;
+    max-height: 24em;
+    object-fit: contain;
+    pointer-events: all;
   }
 }

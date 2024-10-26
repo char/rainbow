@@ -19,6 +19,11 @@ button {
   user-select: none;
 }
 
+img {
+  pointer-events: none;
+  user-select: none;
+}
+
 img.avatar {
   height: 42px;
   aspect-ratio: 1;
