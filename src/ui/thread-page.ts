@@ -45,9 +45,6 @@ export function* threadPost(
 export function threadPage() {
   const page = elem("section", { className: "timeline" });
 
-  let thread: HTMLElement | undefined;
-  let threadURI: string | undefined;
-
   route.subscribe(async route => {
     if (route.id !== "thread") {
       page.remove();
@@ -55,13 +52,10 @@ export function threadPage() {
     }
 
     page.innerHTML = "";
-
     const { data: threadView } = await session!.xrpc.get("app.bsky.feed.getPostThread", {
       params: { uri: route.uri },
     });
-
     page.append(...threadPost(threadView.thread));
-
     select(app, "main").append(page);
   });
 }
