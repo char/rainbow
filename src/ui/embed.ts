@@ -11,7 +11,6 @@ export function embed(embed: NonNullable<AppBskyFeedDefs.PostView["embed"]>): HT
     }
 
     return container;
-    // TODO
   }
 
   return elem("div");

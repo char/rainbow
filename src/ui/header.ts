@@ -53,7 +53,7 @@ export function profile() {
 export function header() {
   select(app, "header").append(
     elem("section", { id: "app-info" }, [
-      elem("h1", {}, ["Rainbow"]),
+      elem("h1", {}, ["Rainbow", elem("span", { ariaHidden: "true" }, [" 🌈"])]),
       elem("small", {}, ["Vanilla client for Bluesky."]),
     ]),
   );

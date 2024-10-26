@@ -35,6 +35,12 @@
 
   .author strong {
     margin-right: 0.5ch;
+
+    display: inline-flex;
+    text-overflow: ellipsis;
+    max-width: 30ch;
+    overflow-x: hidden;
+    white-space: nowrap;
   }
 
   & > section {
@@ -108,9 +114,18 @@
 
   .like {
     --color: 251 81 121;
+    &[data-like] {
+      color: rgb(var(--color) / 1);
+      & > svg {
+        fill: currentColor;
+      }
+    }
   }
   .repost {
     --color: 95 255 159;
+    &[data-repost] {
+      color: rgb(var(--color) / 1);
+    }
   }
   .reply {
     --color: var(--col-accent);
@@ -123,11 +138,13 @@
   justify-content: space-between;
   gap: 1em;
   margin: 0.5em 0;
+  overflow-x: auto;
 
   &.images img {
     border: 1px solid rgb(var(--col-bg-3) / 1);
     border-radius: 8px;
 
+    min-width: 4em;
     width: 100%;
     max-height: 24em;
     object-fit: contain;
