@@ -1,5 +1,7 @@
-import { createAuthorizationUrl } from "npm:@atcute/oauth-browser-client@1";
-import { resolveFromIdentity } from "npm:@atcute/oauth-browser-client@1";
+import {
+  createAuthorizationUrl,
+  resolveFromIdentity,
+} from "npm:@atcute/oauth-browser-client@1";
 import { elem } from "./util/elem.ts";
 import { select } from "./util/select.ts";
 
@@ -19,5 +21,5 @@ loginForm.addEventListener("submit", async e => {
     scope: import.meta.env.OAUTH_SCOPE,
     ...authOpts,
   });
-  window.location.assign(authUrl);
+  location.assign(authUrl);
 });

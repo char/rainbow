@@ -47,7 +47,7 @@ export function parseRoute(path: string): AppRoute {
 
 export function navigateTo(path: string) {
   const parsedRoute = parseRoute(path);
-  routeEarly.set({ from: window.location.pathname, to: path, route: parsedRoute });
+  routeEarly.set({ from: location.pathname, to: path, route: parsedRoute });
   history.pushState(null, "", path);
   route.set(parsedRoute);
 }
@@ -61,17 +61,17 @@ document.addEventListener("click", e => {
 
   // TODO: make sure these open in a new tab
   const url = new URL(anchor.href);
-  if (window.location.origin !== url.origin) return; // open external links normally
+  if (location.origin !== url.origin) return; // open external links normally
 
   e.preventDefault();
   navigateTo(url.pathname);
 });
 
-window.addEventListener("popstate", () => {
-  const parsedRoute = parseRoute(window.location.pathname);
+addEventListener("popstate", () => {
+  const parsedRoute = parseRoute(location.pathname);
   routeEarly.set({
     from: routeEarly.get().to,
-    to: window.location.pathname,
+    to: location.pathname,
     route: parsedRoute,
   });
   route.set(parsedRoute);

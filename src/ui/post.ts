@@ -1,7 +1,12 @@
 import type { AppBskyFeedDefs, AppBskyFeedPost } from "@atcute/client/lexicons";
 import { navigateTo } from "../navigation.ts";
 import { session } from "../session.ts";
-import { $posts, normalizePostURI, type StoredPost } from "../state/post-store.ts";
+import {
+  $posts,
+  normalizePostURI,
+  normalizePostURIInternal,
+  type UIPostData,
+} from "../state/post-store.ts";
 import { createRecord, deleteRecord } from "../util/atp.ts";
 import { elem, noneElem } from "../util/elem.ts";
 import { Ellipsis, Heart, icon, MessageCircle, Repeat2, Reply } from "../util/icons.ts";
@@ -34,7 +39,7 @@ function replyAuthor(reply: AppBskyFeedDefs.ReplyRef): HTMLElement {
 export function createPost(
   post: AppBskyFeedDefs.PostView,
   details?: Pick<AppBskyFeedDefs.FeedViewPost, "reason" | "reply">,
-): StoredPost {
+): UIPostData {
   const record = post.record as AppBskyFeedPost.Record;
 
   const author = {
@@ -235,18 +240,23 @@ export function createPost(
 
     e.preventDefault();
     e.stopPropagation();
-    navigateTo(`/profile/${author.handle ?? author.did}/post/${post.uri.split("/").pop()}`);
+    navigateTo(normalizePostURIInternal(post));
   });
 
-  return (
-    {
-      uri,
-      article,
-      ownLike,
-      ownRepost,
-      likeCount,
-      replyCount,
-      repostCount,
-    } satisfies StoredPost
-  ).also(post => $posts.set(uri, post));
+  const postData = {
+    uri,
+    article,
+    createdAt,
+    ownLike,
+    ownRepost,
+    likeCount,
+    replyCount,
+    repostCount,
+
+    hierarchy: {
+      replies: new Set(),
+    },
+  } satisfies UIPostData;
+
+  return postData.also(post => $posts.set(uri, post));
 }

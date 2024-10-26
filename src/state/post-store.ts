@@ -2,9 +2,11 @@ import type { AppBskyFeedDefs } from "@atcute/client/lexicons";
 import { createPost } from "../ui/post.ts";
 import type { Subscribable } from "../util/subscribable.ts";
 
-export interface StoredPost {
+export interface UIPostData {
   uri: string;
   article: HTMLElement;
+
+  createdAt: Date;
 
   ownLike: Subscribable<string | undefined>;
   ownRepost: Subscribable<string | undefined>;
@@ -13,21 +15,34 @@ export interface StoredPost {
   repostCount: Subscribable<number>;
   replyCount: Subscribable<number>;
 
-  parent?: StoredPost;
-  replies?: StoredPost[];
+  feedViewDetails?: {
+    reason?: AppBskyFeedDefs.FeedViewPost["reason"];
+    reply?: AppBskyFeedDefs.FeedViewPost["reply"];
+  };
+
+  hierarchy: {
+    parent?: UIPostData;
+    replies: Set<UIPostData>;
+  };
 }
 
-export const $posts = new Map<string, StoredPost>();
+export const $posts = new Map<string, UIPostData>();
+Object.defineProperty(globalThis, "$posts", { value: $posts });
 
 export function normalizePostURI(post: AppBskyFeedDefs.PostView) {
   const handle = post.author.handle === "handle.invalid" ? undefined : post.author.handle;
   return `at://${handle ?? post.author.did}/app.bsky.feed.post/${post.uri.split("/").pop()}`;
 }
 
+export function normalizePostURIInternal(post: AppBskyFeedDefs.PostView) {
+  const handle = post.author.handle === "handle.invalid" ? undefined : post.author.handle;
+  return `/profile/${handle ?? post.author.did}/post/${post.uri.split("/").pop()}`;
+}
+
 export function post(
   post: AppBskyFeedDefs.PostView,
   details?: Pick<AppBskyFeedDefs.FeedViewPost, "reason" | "reply">,
-): StoredPost {
+): UIPostData {
   const uri = normalizePostURI(post);
   const existingPost = $posts.get(uri);
   if (existingPost) {

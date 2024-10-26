@@ -1,6 +1,6 @@
-import * as oauth from "npm:@atcute/oauth-browser-client@1";
 import * as atcute from "@atcute/client";
 import { At } from "@atcute/client/lexicons";
+import * as oauth from "npm:@atcute/oauth-browser-client@1";
 
 oauth.configureOAuth({
   metadata: {
@@ -18,14 +18,14 @@ export interface Session {
 }
 
 const loadOAuthSession = async (): Promise<oauth.Session | undefined> => {
-  const params = new URLSearchParams(window.location.hash.substring(1));
+  const params = new URLSearchParams(location.hash.substring(1));
   if (params.has("state") && (params.has("code") || params.has("error"))) {
-    history.replaceState(null, "", window.location.pathname + window.location.search);
+    history.replaceState(null, "", location.pathname + location.search);
     const session = await oauth.finalizeAuthorization(params);
     return session;
   }
 
-  const lastUsedSession = window.localStorage.getItem("rainbow/last-used-session");
+  const lastUsedSession = localStorage.getItem("rainbow/last-used-session");
   if (lastUsedSession !== null) {
     try {
       return await oauth.getSession(lastUsedSession as At.DID);
@@ -65,8 +65,8 @@ const oauthSession = await loadOAuthSession();
 if (oauthSession !== undefined) session = await loadSession(oauthSession);
 
 export function updateStoredSession() {
-  if (session) window.localStorage.setItem("rainbow/last-used-session", session.did);
-  else window.localStorage.removeItem("rainbow/last-used-session");
+  if (session) localStorage.setItem("rainbow/last-used-session", session.did);
+  else localStorage.removeItem("rainbow/last-used-session");
 }
 updateStoredSession();
 

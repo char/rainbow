@@ -15,7 +15,7 @@ import { select } from "./util/select.ts";
 
 if (session !== undefined) {
   ui();
-  route.set(parseRoute(window.location.pathname));
+  route.set(parseRoute(location.pathname));
 } else {
   select(app, "main").append(loginForm);
 }

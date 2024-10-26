@@ -194,6 +194,8 @@
   overflow-x: auto;
 
   &.images img {
+    aspect-ratio: var(--aspect-ratio);
+
     border: 1px solid rgb(var(--col-bg-3) / 1);
     border-radius: 8px;
 

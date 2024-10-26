@@ -9,7 +9,7 @@ export function debugUI() {
   const routeDebug = elem("code", {}, []);
   route.subscribe(route => {
     routeDebug.textContent = JSON.stringify(route, undefined, 2);
-    bskyAppLink.href = new URL(window.location.pathname, "https://bsky.app").href;
+    bskyAppLink.href = new URL(location.pathname, "https://bsky.app").href;
   });
 
   const footer = select(app, "footer");

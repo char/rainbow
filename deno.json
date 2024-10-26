@@ -10,17 +10,7 @@
     "@atcute/client": "npm:@atcute/client@2"
   },
   "compilerOptions": {
-    "lib": [
-      "deno.window",
-      "dom"
-    ],
-    "types": [
-      "./vendored-lexicons/bsky.ts"
-    ]
-  },
-  "lint": {
-    "rules": {
-      "exclude": ["no-window", "no-window-prefix"]
-    }
+    "lib": ["deno.window", "dom"],
+    "types": ["./vendored-lexicons/bsky.ts"]
   }
 }
