@@ -122,7 +122,7 @@ export function post(
           elem("button", { className: "reply" }, [
             icon(MessageCircle),
             elem("data").also(data =>
-              replyCount.subscribe(count => (data.textContent = `${count}`)),
+              replyCount.subscribeImmediate(count => (data.textContent = `${count}`)),
             ),
           ]),
           elem("button", { className: "repost" }, [
