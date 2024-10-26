@@ -31,7 +31,12 @@ class SubscribableBase<A, B extends A> {
   }
 }
 
-export class Subscribable<T> extends SubscribableBase<T, T> {}
+export class Subscribable<T> extends SubscribableBase<T, T> {
+  subscribeImmediate(listener: Subscription<T>): ReturnType<typeof this.subscribe> {
+    listener(this.value);
+    return this.subscribe(listener);
+  }
+}
 export class LateSubscribable<T> extends SubscribableBase<T | undefined, T> {
   constructor() {
     super(undefined);

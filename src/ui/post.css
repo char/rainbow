@@ -1,4 +1,4 @@
-rainbow-post {
+.post {
   overflow: clip;
 
   display: flex;
@@ -68,21 +68,21 @@ rainbow-post {
   }
 }
 
-rainbow-post:first-child {
+.post:first-child {
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
 }
 
-rainbow-post:last-child {
+.post:last-child {
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
 }
 
-rainbow-post + rainbow-post {
+.post + .post {
   border-top: none;
 }
 
-rainbow-post .controls {
+.post .controls {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -134,7 +134,7 @@ rainbow-post .controls {
   }
 }
 
-rainbow-post .embed {
+.post .embed {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
