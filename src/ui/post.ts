@@ -12,7 +12,7 @@ import {
   type UIPostData,
 } from "../state/post-store.ts";
 import { createRecord, deleteRecord } from "../util/atp.ts";
-import { elem, noneElem } from "../util/elem.ts";
+import { elem } from "../util/elem.ts";
 import { Ellipsis, Heart, icon, MessageCircle, Repeat2, Reply } from "../util/icons.ts";
 import { Subscribable } from "../util/subscribable.ts";
 import { formatRelativeTime } from "../util/temporal.ts";
@@ -150,9 +150,9 @@ export function createPost(post: AppBskyFeedDefs.PostView, reply?: UIPostReply):
               "Replying to ",
               replyAuthor(reply),
             ])
-          : noneElem(),
+          : "",
         richText(record.text, record.facets),
-        post.embed ? renderEmbed(post.embed) : "",
+        post.embed?.tap(renderEmbed) ?? "",
         elem("section", { className: "controls" }, [
           elem("button", { className: "reply" }, [
             icon(MessageCircle),

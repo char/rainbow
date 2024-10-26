@@ -21,10 +21,7 @@ export function timeline() {
     });
 
     for (const postView of timeline.data.feed) {
-      const { article } = post(
-        postView.post,
-        postView.reply ? feedReply(postView.reply.parent) : undefined,
-      );
+      const { article } = post(postView.post, postView.reply?.parent?.tap(feedReply));
       feed.append(article);
     }
   });

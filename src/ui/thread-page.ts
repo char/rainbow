@@ -6,7 +6,7 @@ import { elem } from "../util/elem.ts";
 import { select } from "../util/select.ts";
 import { setClass } from "../util/set-class.ts";
 import { app } from "./_ui.ts";
-import { threadReply, type UIPostReply } from "./post.ts";
+import { threadReply } from "./post.ts";
 
 export function sortPosts(posts: UIPostData[]) {
   // TODO: follower priority for sorting?
@@ -16,8 +16,7 @@ export function sortPosts(posts: UIPostData[]) {
 export function buildThread(threadView: AppBskyFeedGetPostThread.Output["thread"]): UIPostData {
   if (threadView.$type !== "app.bsky.feed.defs#threadViewPost") throw new Error("TODO");
 
-  const reply = threadView.parent ? threadReply(threadView.parent) : undefined;
-  const root = post(threadView.post, reply);
+  const root = post(threadView.post, threadView.parent?.tap(threadReply));
   setClass(root.article, "active", true);
 
   type ThreadData = { threadView: typeof threadView; post: UIPostData };
@@ -28,12 +27,12 @@ export function buildThread(threadView: AppBskyFeedGetPostThread.Output["thread"
     let parent: ThreadData | undefined;
 
     if (current.threadView.parent?.$type === "app.bsky.feed.defs#threadViewPost") {
-      const parentReply: UIPostReply | undefined = current.threadView.parent.parent
-        ? threadReply(current.threadView.parent.parent)
-        : undefined;
       parent = {
         threadView: current.threadView.parent,
-        post: post(current.threadView.parent.post, parentReply),
+        post: post(
+          current.threadView.parent.post,
+          current.threadView.parent.parent?.tap(threadReply),
+        ),
       };
     }
 
