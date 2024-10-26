@@ -6,6 +6,7 @@ import { elem } from "../util/elem.ts";
 import { select } from "../util/select.ts";
 import { setClass } from "../util/set-class.ts";
 import { app } from "./_ui.ts";
+import { threadReply, type UIPostReply } from "./post.ts";
 
 export function sortPosts(posts: UIPostData[]) {
   // TODO: follower priority for sorting?
@@ -15,7 +16,8 @@ export function sortPosts(posts: UIPostData[]) {
 export function buildThread(threadView: AppBskyFeedGetPostThread.Output["thread"]): UIPostData {
   if (threadView.$type !== "app.bsky.feed.defs#threadViewPost") throw new Error("TODO");
 
-  const root = post(threadView.post);
+  const reply = threadView.parent ? threadReply(threadView.parent) : undefined;
+  const root = post(threadView.post, reply);
   setClass(root.article, "active", true);
 
   type ThreadData = { threadView: typeof threadView; post: UIPostData };
@@ -23,10 +25,17 @@ export function buildThread(threadView: AppBskyFeedGetPostThread.Output["thread"
 
   let current: ThreadData | undefined = threadData;
   while (current !== undefined) {
-    const parent: ThreadData | undefined =
-      current.threadView.parent?.$type === "app.bsky.feed.defs#threadViewPost"
-        ? { threadView: current.threadView.parent, post: post(current.threadView.parent.post) }
+    let parent: ThreadData | undefined;
+
+    if (current.threadView.parent?.$type === "app.bsky.feed.defs#threadViewPost") {
+      const parentReply: UIPostReply | undefined = current.threadView.parent.parent
+        ? threadReply(current.threadView.parent.parent)
         : undefined;
+      parent = {
+        threadView: current.threadView.parent,
+        post: post(current.threadView.parent.post, parentReply),
+      };
+    }
 
     if (parent) {
       current.post.hierarchy.parent = parent.post;
@@ -46,10 +55,14 @@ export function buildThread(threadView: AppBskyFeedGetPostThread.Output["thread"
       let isTopReply = true;
       for (const reply of thread.threadView.replies) {
         if (reply.$type === "app.bsky.feed.defs#threadViewPost") {
-          const replyThread: ThreadData = { threadView: reply, post: post(reply.post) };
+          const replyThread: ThreadData = {
+            threadView: reply,
+            post: post(reply.post, threadReply(thread.threadView)),
+          };
           setClass(replyThread.post.article, "active", false);
           setClass(replyThread.post.article, "top-reply", isTopReply);
 
+          replyThread.post.hierarchy.parent = thread.post;
           thread.post.hierarchy.replies.add(replyThread.post);
 
           isTopReply = false;
@@ -101,7 +114,7 @@ export function renderThread(page: HTMLElement, root: UIPostData) {
 }
 
 export function threadPage() {
-  const page = elem("section", { className: "timeline" });
+  const page = elem("section", { className: "timeline thread" });
 
   route.subscribe(async route => {
     if (route.id !== "thread") {

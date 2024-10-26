@@ -92,6 +92,10 @@
   margin-top: 0;
 }
 
+.timeline.thread .reply-details {
+  display: none;
+}
+
 .post.top-reply,
 .post.has-reply {
   & > aside {

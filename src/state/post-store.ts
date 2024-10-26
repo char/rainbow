@@ -1,5 +1,5 @@
 import type { AppBskyFeedDefs } from "@atcute/client/lexicons";
-import { createPost } from "../ui/post.ts";
+import { createPost, type UIPostReply } from "../ui/post.ts";
 import type { Subscribable } from "../util/subscribable.ts";
 
 export interface UIPostData {
@@ -40,15 +40,12 @@ export function normalizePostURIInternal(post: AppBskyFeedDefs.PostView) {
   return `/profile/${handle ?? post.author.did}/post/${post.uri.split("/").pop()}`;
 }
 
-export function post(
-  post: AppBskyFeedDefs.PostView,
-  details?: Pick<AppBskyFeedDefs.FeedViewPost, "reason" | "reply">,
-): UIPostData {
+export function post(post: AppBskyFeedDefs.PostView, reply?: UIPostReply): UIPostData {
   const uri = normalizePostURI(post);
   const existingPost = $posts.get(uri);
   if (existingPost) {
     existingPost.article.className = "post";
     return existingPost;
   }
-  return createPost(post, details);
+  return createPost(post, reply);
 }

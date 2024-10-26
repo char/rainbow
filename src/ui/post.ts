@@ -1,4 +1,8 @@
-import type { AppBskyFeedDefs, AppBskyFeedPost } from "@atcute/client/lexicons";
+import type {
+  AppBskyActorDefs,
+  AppBskyFeedDefs,
+  AppBskyFeedPost,
+} from "@atcute/client/lexicons";
 import { navigateTo } from "../navigation.ts";
 import { session } from "../session.ts";
 import {
@@ -15,31 +19,59 @@ import { formatRelativeTime } from "../util/temporal.ts";
 import { embed as renderEmbed } from "./embed.ts";
 import { richText } from "./rich-text.ts";
 
-function replyAuthor(reply: AppBskyFeedDefs.ReplyRef): HTMLElement {
-  if (reply.parent.$type === "app.bsky.feed.defs#notFoundPost") {
-    return elem("a", { href: reply.parent.uri }, ["[not found]"]);
+export type UIPostReply =
+  | { type: "post"; author: AppBskyActorDefs.ProfileViewBasic }
+  | { type: "blocked"; author: AppBskyFeedDefs.BlockedAuthor }
+  | { type: "not-found"; uri: string };
+export function feedReply(feedParent: AppBskyFeedDefs.ReplyRef["parent"]): UIPostReply {
+  if (feedParent.$type === "app.bsky.feed.defs#postView") {
+    return { type: "post", author: feedParent.author };
+  }
+  if (feedParent.$type === "app.bsky.feed.defs#blockedPost") {
+    return { type: "blocked", author: feedParent.author };
+  }
+  if (feedParent.$type === "app.bsky.feed.defs#notFoundPost") {
+    return { type: "not-found", uri: feedParent.uri };
+  }
+  throw new Error("unreachable");
+}
+export function threadReply(
+  threadParent: NonNullable<AppBskyFeedDefs.ThreadViewPost["parent"]>,
+): UIPostReply {
+  if (threadParent.$type === "app.bsky.feed.defs#threadViewPost") {
+    return { type: "post", author: threadParent.post.author };
+  }
+  if (threadParent.$type === "app.bsky.feed.defs#blockedPost") {
+    return { type: "blocked", author: threadParent.author };
+  }
+  if (threadParent.$type === "app.bsky.feed.defs#notFoundPost") {
+    return { type: "not-found", uri: threadParent.uri };
+  }
+  throw new Error("unreachable");
+}
+
+function replyAuthor(reply: UIPostReply): HTMLElement {
+  if (reply.type === "not-found") {
+    return elem("a", { href: reply.uri }, ["[not found]"]);
   }
 
   let display: string | undefined;
   let didOrHandle: string | undefined;
 
-  if (reply.parent.$type === "app.bsky.feed.defs#postView") {
-    display = reply.parent.author.displayName ?? reply.parent.author.handle;
-    didOrHandle = reply.parent.author.did;
+  if (reply.type === "post") {
+    display = reply.author.displayName ?? reply.author.handle;
+    didOrHandle = reply.author.did;
   }
-  if (reply.parent.$type === "app.bsky.feed.defs#blockedPost") {
+  if (reply.type === "blocked") {
     display = "[blocked]";
-    didOrHandle = reply.parent.author.did;
+    didOrHandle = reply.author.did;
   }
   if (display === undefined || didOrHandle === undefined) throw new Error("unreachable");
 
   return elem("a", { className: "handle", href: `/profile/${didOrHandle}` }, [display]);
 }
 
-export function createPost(
-  post: AppBskyFeedDefs.PostView,
-  details?: Pick<AppBskyFeedDefs.FeedViewPost, "reason" | "reply">,
-): UIPostData {
+export function createPost(post: AppBskyFeedDefs.PostView, reply?: UIPostReply): UIPostData {
   const record = post.record as AppBskyFeedPost.Record;
 
   const author = {
@@ -112,11 +144,11 @@ export function createPost(
             }),
           ]),
         ]),
-        details?.reply
+        reply
           ? elem("span", { className: "reply-details" }, [
               icon(Reply),
               "Replying to ",
-              replyAuthor(details.reply),
+              replyAuthor(reply),
             ])
           : noneElem(),
         richText(record.text, record.facets),

@@ -4,6 +4,7 @@ import { post } from "../state/post-store.ts";
 import { elem } from "../util/elem.ts";
 import { select } from "../util/select.ts";
 import { app } from "./_ui.ts";
+import { feedReply } from "./post.ts";
 
 export function timeline() {
   const feed = elem("section", { className: "timeline" });
@@ -20,7 +21,10 @@ export function timeline() {
     });
 
     for (const postView of timeline.data.feed) {
-      const { article } = post(postView.post, postView);
+      const { article } = post(
+        postView.post,
+        postView.reply ? feedReply(postView.reply.parent) : undefined,
+      );
       feed.append(article);
     }
   });
