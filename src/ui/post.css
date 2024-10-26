@@ -1,7 +1,5 @@
-.post {
+rainbow-post {
   overflow: clip;
-
-  cursor: pointer;
 
   display: flex;
   flex-direction: row;
@@ -12,6 +10,10 @@
 
   border: 1px solid rgb(var(--col-bg-3) / 1);
   border-collapse: collapse;
+
+  &[data-link] {
+    cursor: pointer;
+  }
 
   .topline {
     display: flex;
@@ -66,21 +68,21 @@
   }
 }
 
-.post:first-child {
+rainbow-post:first-child {
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
 }
 
-.post:last-child {
+rainbow-post:last-child {
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
 }
 
-.post + .post {
+rainbow-post + rainbow-post {
   border-top: none;
 }
 
-.post .controls {
+rainbow-post .controls {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -132,7 +134,7 @@
   }
 }
 
-.post .embed {
+rainbow-post .embed {
   display: flex;
   flex-direction: row;
   justify-content: space-between;

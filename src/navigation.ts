@@ -57,7 +57,6 @@ document.addEventListener("click", e => {
   if (window.location.origin !== url.origin) return; // open external links normally
 
   e.preventDefault();
-
   navigateTo(url.pathname);
 });
 

@@ -30,8 +30,11 @@ img.avatar {
   border-radius: 50%;
 }
 
-a.contents {
+.contents {
   display: contents;
+}
+.display-none {
+  display: none;
 }
 
 a.handle {

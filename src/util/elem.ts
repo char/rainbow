@@ -25,3 +25,13 @@ export function elem<K extends keyof HTMLElementTagNameMap>(
 
   return element;
 }
+
+export function elemRewrite(element: Element, children: (Element | string | Text)[] = []) {
+  element.innerHTML = "";
+  const nodes = children.map(e => (typeof e === "string" ? document.createTextNode(e) : e));
+  element.append(...nodes);
+}
+
+export function noneElem() {
+  return elem("div", { className: "display-none" });
+}

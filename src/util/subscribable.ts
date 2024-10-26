@@ -1,4 +1,4 @@
-export type Subscription<T> = (value: T) => void | Promise<void>;
+export type Subscription<T> = (value: T) => unknown | Promise<unknown>;
 
 class SubscribableBase<A, B extends A> {
   #listeners: Set<Subscription<B>> = new Set();
