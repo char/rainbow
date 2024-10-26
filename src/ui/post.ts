@@ -98,7 +98,7 @@ export function createPost(post: AppBskyFeedDefs.PostView, reply?: UIPostReply):
     [
       elem("aside", {}, [
         elem("a", { className: "contents", href: `/profile/${author.handle ?? author.did}` }, [
-          elem("img", { className: "avatar", src: author.avatar }),
+          elem("img", { className: "avatar", src: author.avatar, loading: "lazy" }),
         ]),
       ]),
       elem("section", {}, [

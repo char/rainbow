@@ -51,6 +51,7 @@ a.link {
   }
 }
 
-img.avatar:not([src]) {
-  background-image: linear-gradient(gray, white);
+img.avatar:not([src][complete]),
+img.banner:not([src][complete]) {
+  background-image: linear-gradient(45deg, rgb(var(--col-accent) / 1), rgb(var(--col-fg) / 1));
 }

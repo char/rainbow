@@ -148,7 +148,7 @@ export function threadPage() {
 
     if (eagerPost) {
       const postRect = eagerPost.article.getBoundingClientRect();
-      const delta = postRect.y - (earlyBoundingRect?.y ?? 0);
+      const delta = postRect.y + 1 - (earlyBoundingRect?.y ?? 0);
       scrollTo(0, scrollY + delta);
     }
   });

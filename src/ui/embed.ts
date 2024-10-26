@@ -6,7 +6,12 @@ export function embed(embed: NonNullable<AppBskyFeedDefs.PostView["embed"]>): HT
     const container = elem("div", { className: "embed images" });
 
     for (const image of embed.images) {
-      const img = elem("img", { src: image.fullsize, alt: image.alt, title: image.alt });
+      const img = elem("img", {
+        src: image.fullsize,
+        alt: image.alt,
+        title: image.alt,
+        loading: "lazy",
+      });
       if (image.aspectRatio)
         img.style.setProperty(
           "--aspect-ratio",

@@ -2,11 +2,12 @@ import type { AppBskyActorDefs } from "@atcute/client/lexicons";
 import { route } from "../navigation.ts";
 import { session } from "../session.ts";
 import { post } from "../state/post-store.ts";
-import { elem } from "../util/elem.ts";
+import { elem, noneElem } from "../util/elem.ts";
 import { select } from "../util/select.ts";
 import { app } from "./_ui.ts";
 import { feedReply } from "./post.ts";
 import { richText } from "./rich-text.ts";
+import { Timeline } from "./timeline.ts";
 
 export function profileDetails(
   actor: string,
@@ -64,9 +65,11 @@ export function profileTimeline(actor: string): HTMLElement {
 
 export function profilePage() {
   const page = elem("section");
-  let profile: HTMLElement | undefined;
+  let profile: HTMLElement = elem("div");
 
-  let actor: string | undefined;
+  let lastActor: string | undefined;
+  let timeline = new Timeline();
+  let details: Element = noneElem();
 
   route.subscribe(async route => {
     if (route.id !== "profile") {
@@ -74,27 +77,43 @@ export function profilePage() {
       return;
     }
 
-    // if we're returning to the last actor we loaded we can use the stuff we already rendered
-    if (route.didOrHandle === actor) {
-      select(app, "main").append(page);
-      return;
-    }
-
     if (profile) profile.remove();
-    select(app, "main").append(page);
-    profile = elem("div");
-
-    actor = route.didOrHandle;
-
-    const { data: profileView } = await session!.xrpc.get("app.bsky.actor.getProfile", {
-      params: { actor },
-    });
-
-    profile.append(profileDetails(actor, profileView));
-    profile.append(profileTimeline(actor));
-
+    profile = elem("div", {}, [details]);
     page.append(profile);
 
-    // TODO: render a timeline of posts
+    const actor = route.didOrHandle;
+
+    // if we're returning to the last actor we loaded we can use the stuff we already rendered
+    if (actor === lastActor) {
+      select(app, "main").append(page);
+      timeline.show(profile);
+    }
+
+    lastActor = actor;
+
+    const showProfileDetails = async () => {
+      const { data: profileView } = await session!.xrpc.get("app.bsky.actor.getProfile", {
+        params: { actor },
+      });
+      const newDetails = profileDetails(actor, profileView);
+      details.replaceWith(newDetails);
+      details = newDetails;
+    };
+
+    const loadTimeline = async () => {
+      timeline.hide();
+      timeline = new Timeline();
+      timeline.show(profile);
+
+      const { data: feedView } = await session!.xrpc.get("app.bsky.feed.getAuthorFeed", {
+        params: { actor, filter: "posts_and_author_threads", limit: 30 },
+      });
+
+      timeline.append(feedView.feed);
+      timeline.cursor = feedView.cursor;
+    };
+
+    await Promise.all([showProfileDetails(), loadTimeline()]);
+    select(app, "main").append(page);
   });
 }
