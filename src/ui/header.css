@@ -1,0 +1,59 @@
+#app > header {
+  display: flex;
+  flex-direction: column;
+}
+
+#app > header > nav {
+  flex: 1;
+}
+
+#app > header > * {
+  padding: 8px;
+}
+
+#app > header > nav {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+
+  margin-top: 1em;
+
+  a {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    width: 100%;
+    font-size: 1.25em;
+    padding: 0.5em 8px;
+    border-radius: 8px;
+
+    &:hover {
+      background-color: rgb(var(--col-bg-2) / 1);
+    }
+
+    & > svg {
+      margin-right: 0.5em;
+    }
+  }
+}
+
+#app > header #self-profile {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1em;
+
+  border-radius: 12px;
+  height: 3em;
+
+  &:hover {
+    background-color: rgb(var(--col-bg-2) / 1);
+  }
+
+  #name {
+    display: flex;
+    flex-direction: column;
+    padding-top: 1px;
+  }
+}

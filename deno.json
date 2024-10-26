@@ -1,0 +1,26 @@
+{
+  "tasks": {
+    "build": "deno run -A ./_build.ts",
+    "watch": "deno run -A ./_build.ts --watch",
+    "clean": "deno run -A ./_build.ts --clean"
+  },
+  "imports": {
+    "build-system-env": "data:text/javascript,export default {}",
+    "@atcute/client/lexicons": "npm:@atcute/client@2/lexicons",
+    "@atcute/client": "npm:@atcute/client@2"
+  },
+  "compilerOptions": {
+    "lib": [
+      "deno.window",
+      "dom"
+    ],
+    "types": [
+      "./vendored-lexicons/bsky.ts"
+    ]
+  },
+  "lint": {
+    "rules": {
+      "exclude": ["no-window", "no-window-prefix"]
+    }
+  }
+}

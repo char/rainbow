@@ -1,0 +1,20 @@
+html {
+  --inter: Inter;
+
+  font-family: var(--inter), "Noto Color Emoji", sans-serif;
+  font-feature-settings:
+    "liga" 1,
+    "calt" 1;
+}
+@supports (font-variation-settings: normal) {
+  html {
+    --inter: InterVariable;
+  }
+}
+
+pre,
+code {
+  font-family: "SF Mono", "Fira Mono", "Roboto Mono", monospace;
+  font-size: smaller;
+  font-feature-settings: "liga" 0;
+}

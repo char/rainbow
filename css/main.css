@@ -1,0 +1,38 @@
+@import url(./reset.css);
+
+@import url(./palette.css);
+@import url(./typography.css);
+@import url(./layout.css);
+
+@import url(../src/ui/_ui.css);
+
+html {
+  background-color: rgb(var(--col-bg-0) / 1);
+  color: rgb(var(--col-fg) / 1);
+}
+
+button {
+  all: unset;
+  appearance: none;
+
+  display: block;
+  user-select: none;
+}
+
+img.avatar {
+  height: 42px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+
+a.contents {
+  display: contents;
+}
+
+a.handle {
+  color: rgb(var(--col-fg-muted) / 1);
+}
+
+img.avatar:not([src]) {
+  background-image: linear-gradient(gray, white);
+}

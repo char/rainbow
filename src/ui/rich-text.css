@@ -1,0 +1,12 @@
+.rich-text {
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: break-word;
+
+  a {
+    color: rgb(var(--col-accent) / 1);
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+}
