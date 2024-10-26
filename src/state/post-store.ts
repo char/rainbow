@@ -26,6 +26,7 @@ export interface UIPostData {
   };
 }
 
+// TODO: evict posts from store when we don't need them
 export const $posts = new Map<string, UIPostData>();
 Object.defineProperty(globalThis, "$posts", { value: $posts });
 

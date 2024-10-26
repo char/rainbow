@@ -1,8 +1,4 @@
-import type {
-  AppBskyFeedDefs,
-  AppBskyFeedGetPostThread,
-  AppBskyFeedPost,
-} from "@atcute/client/lexicons";
+import type { AppBskyFeedGetPostThread } from "@atcute/client/lexicons";
 import { route } from "../navigation.ts";
 import { session } from "../session.ts";
 import { $posts, post, type UIPostData } from "../state/post-store.ts";
@@ -11,66 +7,97 @@ import { select } from "../util/select.ts";
 import { setClass } from "../util/set-class.ts";
 import { app } from "./_ui.ts";
 
-// TODO: follower priority for sorting?
-
 export function sortPosts(posts: UIPostData[]) {
+  // TODO: follower priority for sorting?
   posts.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
 }
 
-export function sortReplies(replies: NonNullable<AppBskyFeedDefs.ThreadViewPost["replies"]>) {
-  replies.sort((a, b) => {
-    if (
-      a.$type !== "app.bsky.feed.defs#threadViewPost" ||
-      b.$type !== "app.bsky.feed.defs#threadViewPost"
-    ) {
-      return 0;
+export function buildThread(threadView: AppBskyFeedGetPostThread.Output["thread"]): UIPostData {
+  if (threadView.$type !== "app.bsky.feed.defs#threadViewPost") throw new Error("TODO");
+
+  const root = post(threadView.post);
+  setClass(root.article, "active", true);
+
+  type ThreadData = { threadView: typeof threadView; post: UIPostData };
+  const threadData = { threadView, post: root };
+
+  let current: ThreadData | undefined = threadData;
+  while (current !== undefined) {
+    const parent: ThreadData | undefined =
+      current.threadView.parent?.$type === "app.bsky.feed.defs#threadViewPost"
+        ? { threadView: current.threadView.parent, post: post(current.threadView.parent.post) }
+        : undefined;
+
+    if (parent) {
+      current.post.hierarchy.parent = parent.post;
+      parent.post.hierarchy.replies.add(current.post);
+      setClass(parent.post.article, "active", false);
+      setClass(parent.post.article, "has-reply", true);
+      setClass(current.post.article, "top-reply", true);
     }
 
-    const aRecord = a.post.record as AppBskyFeedPost.Record;
-    const bRecord = b.post.record as AppBskyFeedPost.Record;
-    return new Date(aRecord.createdAt).getTime() - new Date(bRecord.createdAt).getTime();
-  });
+    current = parent;
+  }
+
+  const addReplies = (thread: ThreadData) => {
+    if (thread.threadView.replies?.length) {
+      setClass(thread.post.article, "has-reply", true);
+
+      let isTopReply = true;
+      for (const reply of thread.threadView.replies) {
+        if (reply.$type === "app.bsky.feed.defs#threadViewPost") {
+          const replyThread: ThreadData = { threadView: reply, post: post(reply.post) };
+          setClass(replyThread.post.article, "active", false);
+          setClass(replyThread.post.article, "top-reply", isTopReply);
+
+          thread.post.hierarchy.replies.add(replyThread.post);
+
+          isTopReply = false;
+          addReplies(replyThread);
+        }
+
+        isTopReply = false;
+      }
+    }
+  };
+
+  addReplies(threadData);
+
+  return root;
 }
 
-export function* threadPost(
-  threadView: AppBskyFeedGetPostThread.Output["thread"],
-  opts: {
-    active?: boolean;
-    topReply?: boolean;
-    parentPost?: UIPostData;
-    childPost?: UIPostData;
-  } = {},
-): Generator<UIPostData> {
-  if (threadView.$type !== "app.bsky.feed.defs#threadViewPost") return;
+export function renderThread(page: HTMLElement, root: UIPostData) {
+  page.append(root.article);
+  setClass(root.article, "active", true);
 
-  const currentPost = post(threadView.post);
-  setClass(currentPost.article, "top-reply", opts.topReply);
-  setClass(currentPost.article, "has-reply", opts.childPost || threadView.replies?.length);
-  setClass(currentPost.article, "active", opts.active);
-
-  if (opts.parentPost) {
-    currentPost.hierarchy.parent = opts.parentPost;
-    opts.parentPost.hierarchy.replies.add(currentPost);
-  }
-  if (opts.childPost) {
-    currentPost.hierarchy.replies.add(opts.childPost);
-    opts.childPost.hierarchy.parent = currentPost;
-  }
-
-  if (threadView.parent) {
-    yield* threadPost(threadView.parent, { childPost: currentPost });
-    setClass(currentPost.article, "top-reply", true);
-  }
-
-  yield currentPost;
-
-  if (threadView.replies) {
-    let isTopReply = true;
-    for (const reply of [...threadView.replies].also(sortReplies)) {
-      yield* threadPost(reply, { parentPost: currentPost, topReply: isTopReply });
-      isTopReply = false;
+  // render ancestors
+  let current: UIPostData | undefined = root;
+  while (current) {
+    const parent: UIPostData | undefined = current.hierarchy.parent;
+    if (parent) {
+      current.article.insertAdjacentElement("beforebegin", parent.article);
+      setClass(parent.article, "active", false);
+      setClass(parent.article, "has-reply", true);
+      setClass(current.article, "top-reply", true);
     }
+    current = parent;
   }
+
+  const addReplies = (post: UIPostData) => {
+    let isTopReply = true;
+    for (const child of [...post.hierarchy.replies].also(sortPosts)) {
+      setClass(child.article, "active", false);
+      setClass(child.article, "has-reply", child.hierarchy.replies.size);
+
+      setClass(child.article, "top-reply", isTopReply);
+      isTopReply = false;
+
+      page.append(child.article);
+      addReplies(child);
+    }
+  };
+
+  addReplies(root);
 }
 
 export function threadPage() {
@@ -84,39 +111,14 @@ export function threadPage() {
 
     page.innerHTML = "";
 
-    const earlyPost = $posts.get(route.uri);
-    if (earlyPost) {
-      console.log(earlyPost);
-
-      page.append(earlyPost.article);
-      setClass(earlyPost.article, "active", true);
-
-      let currentUpwards: UIPostData | undefined = earlyPost;
-      while (currentUpwards !== undefined) {
-        if (currentUpwards.hierarchy.parent) {
-          currentUpwards.article.insertAdjacentElement(
-            "beforebegin",
-            currentUpwards.hierarchy.parent.article,
-          );
-          setClass(currentUpwards.hierarchy.parent.article, "active", false);
-        }
-        currentUpwards = currentUpwards.hierarchy.parent;
-      }
-
-      const showChildren = (post: UIPostData) => {
-        for (const child of [...post.hierarchy.replies].also(sortPosts)) {
-          setClass(child.article, "active", false);
-          page.append(child.article);
-          showChildren(child);
-        }
-      };
-
-      showChildren(earlyPost);
+    const eagerPost = $posts.get(route.uri);
+    if (eagerPost) {
+      renderThread(page, eagerPost);
     }
 
     select(app, "main").append(page);
 
-    let earlyBoundingRect: DOMRect | undefined = earlyPost?.article.getBoundingClientRect();
+    let earlyBoundingRect: DOMRect | undefined = eagerPost?.article.getBoundingClientRect();
     const pageBoundingRect = page.getBoundingClientRect();
     if (earlyBoundingRect) {
       // 1px gap for psuedo-border
@@ -127,15 +129,13 @@ export function threadPage() {
       params: { uri: route.uri },
     });
 
-    earlyBoundingRect = earlyPost?.article.getBoundingClientRect();
+    earlyBoundingRect = eagerPost?.article.getBoundingClientRect();
 
     page.innerHTML = "";
-    for (const post of threadPost(threadView.thread, { active: true })) {
-      page.append(post.article);
-    }
+    renderThread(page, buildThread(threadView.thread));
 
-    if (earlyPost) {
-      const postRect = earlyPost.article.getBoundingClientRect();
+    if (eagerPost) {
+      const postRect = eagerPost.article.getBoundingClientRect();
       const delta = postRect.y - (earlyBoundingRect?.y ?? 0);
       scrollTo(0, scrollY + delta);
     }
