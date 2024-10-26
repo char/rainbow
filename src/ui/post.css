@@ -107,10 +107,10 @@
   }
 
   .like {
-    --color: 255 127 127;
+    --color: 251 81 121;
   }
   .repost {
-    --color: 127 255 127;
+    --color: 95 255 159;
   }
   .reply {
     --color: var(--col-accent);
