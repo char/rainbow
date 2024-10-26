@@ -1,9 +1,10 @@
+import type { AppBskyActorDefs } from "@atcute/client/lexicons";
 import { route } from "../navigation.ts";
 import { session } from "../session.ts";
 import { elem } from "../util/elem.ts";
 import { select } from "../util/select.ts";
 import { app } from "./_ui.ts";
-import type { AppBskyActorDefs } from "@atcute/client/lexicons";
+import { post } from "./post.ts";
 import { richText } from "./rich-text.ts";
 
 export function profileDetails(
@@ -41,8 +42,24 @@ export function profileDetails(
   return article;
 }
 
+export function profileTimeline(actor: string): HTMLElement {
+  const section = elem("section");
+
+  session!.xrpc
+    .get("app.bsky.feed.getAuthorFeed", {
+      params: { actor, filter: "posts_and_author_threads", limit: 30 },
+    })
+    .then(({ data: feedView }) => {
+      for (const postView of feedView.feed) {
+        section.append(post(postView.post, postView));
+      }
+    });
+
+  return section;
+}
+
 export function profilePage() {
-  const page = elem("section", {}, []);
+  const page = elem("section");
   let profile: HTMLElement | undefined;
 
   let actor: string | undefined;
@@ -61,6 +78,7 @@ export function profilePage() {
 
     if (profile) profile.remove();
     select(app, "main").append(page);
+    profile = elem("div");
 
     actor = route.didOrHandle;
 
@@ -68,7 +86,9 @@ export function profilePage() {
       params: { actor },
     });
 
-    profile = profileDetails(actor, profileView);
+    profile.append(profileDetails(actor, profileView));
+    profile.append(profileTimeline(actor));
+
     page.append(profile);
 
     // TODO: render a timeline of posts

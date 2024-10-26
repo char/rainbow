@@ -6,7 +6,7 @@ import { app } from "./_ui.ts";
 import { post } from "./post.ts";
 
 export function timeline() {
-  const feed = elem("section", {}, []);
+  const feed = elem("section");
 
   route.subscribe(async route => {
     if (route.id !== "timeline") {

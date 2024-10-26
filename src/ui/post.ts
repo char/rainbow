@@ -8,7 +8,7 @@ export function post(
   details?: Pick<AppBskyFeedDefs.FeedViewPost, "reason" | "reply">,
 ): HTMLElement {
   const record = post.record as AppBskyFeedPost.Record;
-  if (record.$type !== "app.bsky.feed.post") throw new Error(); // TODO
+  if (record.$type !== "app.bsky.feed.post") throw new Error();
 
   const article = elem("article", { className: "post" }, [
     elem("a", { className: "contents", href: `/profile/${post.author.handle}` }, [
