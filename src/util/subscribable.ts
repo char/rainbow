@@ -3,7 +3,7 @@ export type Subscription<T> = (value: T) => unknown | Promise<unknown>;
 class SubscribableBase<A, B extends A> {
   #listeners: Set<Subscription<B>> = new Set();
 
-  constructor(public value: A) {}
+  constructor(private value: A) {}
 
   get(): A {
     return this.value;
@@ -33,7 +33,7 @@ class SubscribableBase<A, B extends A> {
 
 export class Subscribable<T> extends SubscribableBase<T, T> {
   subscribeImmediate(listener: Subscription<T>): ReturnType<typeof this.subscribe> {
-    listener(this.value);
+    listener(this.get());
     return this.subscribe(listener);
   }
 }

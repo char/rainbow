@@ -12,6 +12,11 @@ export type AppRoute =
   | R<"not-found">;
 
 export const route = new Subscribable<AppRoute>({ id: "loading" });
+export const routeEarly = new Subscribable<{ from?: string; to?: string; route: AppRoute }>({
+  from: undefined,
+  to: undefined,
+  route: route.get(),
+});
 
 function matchPattern(pattern: string, path: string): URLPatternResult | undefined {
   const p = new URLPattern(pattern, "http://localhost");
@@ -41,8 +46,10 @@ export function parseRoute(path: string): AppRoute {
 }
 
 export function navigateTo(path: string) {
+  const parsedRoute = parseRoute(path);
+  routeEarly.set({ from: window.location.pathname, to: path, route: parsedRoute });
   history.pushState(null, "", path);
-  route.set(parseRoute(path));
+  route.set(parsedRoute);
 }
 
 document.addEventListener("click", e => {
@@ -61,5 +68,11 @@ document.addEventListener("click", e => {
 });
 
 window.addEventListener("popstate", () => {
-  route.set(parseRoute(window.location.pathname));
+  const parsedRoute = parseRoute(window.location.pathname);
+  routeEarly.set({
+    from: routeEarly.get().to,
+    to: window.location.pathname,
+    route: parsedRoute,
+  });
+  route.set(parsedRoute);
 });

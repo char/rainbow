@@ -20,6 +20,6 @@
   }
 
   & > main {
-    min-height: 1px;
+    padding-bottom: 100vh;
   }
 }
