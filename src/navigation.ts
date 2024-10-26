@@ -40,6 +40,11 @@ export function parseRoute(path: string): AppRoute {
   return { id: "not-found" };
 }
 
+export function navigateTo(path: string) {
+  history.pushState(null, "", path);
+  route.set(parseRoute(path));
+}
+
 document.addEventListener("click", e => {
   if (!(e.target instanceof Element)) return;
   const anchor = e.target.closest("a");
@@ -53,8 +58,7 @@ document.addEventListener("click", e => {
 
   e.preventDefault();
 
-  history.pushState(null, "", url.pathname);
-  route.set(parseRoute(url.pathname));
+  navigateTo(url.pathname);
 });
 
 window.addEventListener("popstate", () => {

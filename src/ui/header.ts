@@ -6,13 +6,11 @@ import { select } from "../util/select.ts";
 import { app } from "./_ui.ts";
 
 export function nav() {
-  const i = (x: string) => Object.assign(icon(x), { ariaHidden: "true" });
-
   const nav = elem("nav", {}, [
-    elem("a", { href: "/" }, [i(House), "Home"]),
-    elem("a", { href: "/notifications" }, [i(Bell), "Notifications"]),
-    elem("a", { href: "/feeds" }, [i(Hash), "Feeds"]),
-    elem("a", { href: "/profile/" + session?.did }, [i(UserCircle), "Profile"]),
+    elem("a", { href: "/" }, [icon(House), "Home"]),
+    elem("a", { href: "/notifications" }, [icon(Bell), "Notifications"]),
+    elem("a", { href: "/feeds" }, [icon(Hash), "Feeds"]),
+    elem("a", { href: "/profile/" + session?.did }, [icon(UserCircle), "Profile"]),
   ]);
 
   select(app, "header").append(nav);

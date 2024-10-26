@@ -1,6 +1,8 @@
 html {
   --inter: Inter;
 
+  font-size: 16px;
+  line-height: 1.25;
   font-family: var(--inter), "Noto Color Emoji", sans-serif;
   font-feature-settings:
     "liga" 1,

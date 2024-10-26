@@ -20,7 +20,7 @@ export function timeline() {
     });
 
     for (const postView of timeline.data.feed) {
-      const article = post(postView.post, postView);
+      const article = post(postView.post, postView, true);
       feed.append(article);
     }
   });

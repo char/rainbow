@@ -1,27 +1,70 @@
 .post {
+  cursor: pointer;
+
   display: flex;
   flex-direction: row;
   align-items: start;
-  gap: 1.5em;
+  gap: 1em;
   padding: 1em;
   padding-bottom: 0.5em;
 
-  background-color: rgb(var(--col-bg-1) / 1);
   border: 1px solid rgb(var(--col-bg-3) / 1);
   border-collapse: collapse;
 
+  .topline {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .details {
+    width: fit-content;
+    white-space: nowrap;
+
+    time {
+      color: rgb(var(--col-fg-muted) / 1);
+    }
+  }
+
   .avatar {
-    height: 44px;
+    height: 46px;
+  }
+
+  .author strong {
+    margin-right: 0.5ch;
   }
 
   & > section {
     flex: 1;
   }
 
-  p {
-    padding-top: 0.25em;
-    padding-bottom: 0.5em;
+  .reply-details {
+    display: inline-block;
+    color: rgb(var(--col-fg-muted) / 1);
+    margin-bottom: 0.25em;
+    margin-top: 0.25em;
+
+    .lucide {
+      height: 1em;
+      vertical-align: text-top;
+      margin-left: -4px;
+    }
   }
+
+  & > section > p {
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+  }
+}
+
+.post:first-child {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.post:last-child {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
 }
 
 .post + .post {
@@ -39,15 +82,21 @@
   button {
     display: flex;
     align-items: center;
-    padding: 0.2em;
+    padding: 0.5em;
+    border-radius: 8px;
 
     &:hover {
       background-color: rgb(var(--col-bg-3) / 1);
     }
 
     & > svg {
-      height: 1.5em;
-      margin-right: 0.5em;
+      margin-left: -6px;
+      height: 1.25em;
+      margin-right: 0.25em;
+    }
+
+    &:not(:has(data)) > svg {
+      margin: 0;
     }
   }
 }

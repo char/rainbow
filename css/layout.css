@@ -6,16 +6,20 @@
   overflow-x: clip;
 
   margin: 0 auto;
-  height: 100vh;
   gap: 1em;
 
   & > * {
     padding: 1em;
-    max-height: calc(100vh - 2em);
-    overflow-y: auto;
+  }
+
+  & > header,
+  & > footer {
+    position: sticky;
+    top: 0;
+    height: calc(100vh - 2em);
   }
 
   & > main {
-    min-height: 100px;
+    min-height: 1px;
   }
 }

@@ -31,6 +31,9 @@ a.contents {
 
 a.handle {
   color: rgb(var(--col-fg-muted) / 1);
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 a.link {

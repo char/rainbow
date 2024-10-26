@@ -51,7 +51,7 @@ export function profileTimeline(actor: string): HTMLElement {
     })
     .then(({ data: feedView }) => {
       for (const postView of feedView.feed) {
-        section.append(post(postView.post, postView));
+        section.append(post(postView.post, postView, true));
       }
     });
 
