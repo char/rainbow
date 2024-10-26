@@ -85,7 +85,7 @@
 }
 
 .post.active {
-  background-color: rgb(var(--col-bg-1) / 1);
+  background-color: rgb(var(--col-bg-2) / 1);
 }
 
 .timeline .post.top-reply {

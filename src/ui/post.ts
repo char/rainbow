@@ -1,7 +1,7 @@
 import type { AppBskyFeedDefs, AppBskyFeedPost } from "@atcute/client/lexicons";
 import { navigateTo } from "../navigation.ts";
 import { session } from "../session.ts";
-import { $posts, type StoredPost } from "../state/post-store.ts";
+import { $posts, normalizePostURI, type StoredPost } from "../state/post-store.ts";
 import { createRecord, deleteRecord } from "../util/atp.ts";
 import { elem, noneElem } from "../util/elem.ts";
 import { Ellipsis, Heart, icon, MessageCircle, Repeat2, Reply } from "../util/icons.ts";
@@ -31,11 +31,10 @@ function replyAuthor(reply: AppBskyFeedDefs.ReplyRef): HTMLElement {
   return elem("a", { className: "handle", href: `/profile/${didOrHandle}` }, [display]);
 }
 
-export function post(
+export function createPost(
   post: AppBskyFeedDefs.PostView,
   details?: Pick<AppBskyFeedDefs.FeedViewPost, "reason" | "reply">,
-  isLink?: boolean,
-): HTMLElement {
+): StoredPost {
   const record = post.record as AppBskyFeedPost.Record;
 
   const author = {
@@ -45,13 +44,7 @@ export function post(
     avatar: post.author.avatar,
   };
 
-  const uri = `at://${author.handle ?? author.did}/app.bsky.feed.post/${post.uri.split("/").pop()}`;
-  const storedPost = $posts.get(uri);
-  if (storedPost !== undefined) {
-    const article = storedPost.article;
-    article.className = "post";
-    return article;
-  }
+  const uri = normalizePostURI(post);
 
   const createdAt = new Date(record.createdAt);
 
@@ -219,7 +212,7 @@ export function post(
       ]),
     ],
     {
-      dataset: { uri, link: isLink ? "" : undefined },
+      dataset: { uri },
     },
   );
 
@@ -230,8 +223,8 @@ export function post(
   });
 
   article.addEventListener("click", e => {
-    const isLink = article.dataset.link !== undefined;
-    if (!isLink) return;
+    const isNotLink = article.dataset.noLink !== undefined;
+    if (isNotLink) return;
 
     if (e.target instanceof HTMLElement && e.target.closest("a") !== null) return;
     if (e.ctrlKey || e.button !== 0) return;
@@ -245,15 +238,15 @@ export function post(
     navigateTo(`/profile/${author.handle ?? author.did}/post/${post.uri.split("/").pop()}`);
   });
 
-  $posts.set(uri, {
-    uri,
-    article,
-    ownLike,
-    ownRepost,
-    likeCount,
-    replyCount,
-    repostCount,
-  } satisfies StoredPost);
-
-  return article;
+  return (
+    {
+      uri,
+      article,
+      ownLike,
+      ownRepost,
+      likeCount,
+      replyCount,
+      repostCount,
+    } satisfies StoredPost
+  ).also(post => $posts.set(uri, post));
 }

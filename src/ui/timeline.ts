@@ -1,9 +1,9 @@
 import { route } from "../navigation.ts";
 import { session } from "../session.ts";
+import { post } from "../state/post-store.ts";
 import { elem } from "../util/elem.ts";
 import { select } from "../util/select.ts";
 import { app } from "./_ui.ts";
-import { post } from "./post.ts";
 
 export function timeline() {
   const feed = elem("section", { className: "timeline" });
@@ -20,7 +20,7 @@ export function timeline() {
     });
 
     for (const postView of timeline.data.feed) {
-      const article = post(postView.post, postView, true);
+      const { article } = post(postView.post, postView);
       feed.append(article);
     }
   });

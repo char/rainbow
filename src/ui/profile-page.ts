@@ -1,10 +1,10 @@
 import type { AppBskyActorDefs } from "@atcute/client/lexicons";
 import { route } from "../navigation.ts";
 import { session } from "../session.ts";
+import { post } from "../state/post-store.ts";
 import { elem } from "../util/elem.ts";
 import { select } from "../util/select.ts";
 import { app } from "./_ui.ts";
-import { post } from "./post.ts";
 import { richText } from "./rich-text.ts";
 
 export function profileDetails(
@@ -54,7 +54,7 @@ export function profileTimeline(actor: string): HTMLElement {
     })
     .then(({ data: feedView }) => {
       for (const postView of feedView.feed) {
-        section.append(post(postView.post, postView, true));
+        section.append(post(postView.post, postView).article);
       }
     });
 

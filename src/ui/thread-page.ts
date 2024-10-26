@@ -1,11 +1,10 @@
 import type { AppBskyFeedGetPostThread } from "@atcute/client/lexicons";
 import { route } from "../navigation.ts";
 import { session } from "../session.ts";
-import { $posts } from "../state/post-store.ts";
+import { $posts, post } from "../state/post-store.ts";
 import { elem } from "../util/elem.ts";
 import { select } from "../util/select.ts";
 import { app } from "./_ui.ts";
-import { post } from "./post.ts";
 
 export function* threadPost(
   threadView: AppBskyFeedGetPostThread.Output["thread"],
@@ -19,7 +18,7 @@ export function* threadPost(
       topReply = true;
     }
 
-    const article = post(threadView.post, undefined, true);
+    const { article } = post(threadView.post);
     if (active) article.classList.add("active");
     if (topReply) article.classList.add("top-reply");
 
