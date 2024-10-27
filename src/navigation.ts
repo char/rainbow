@@ -24,25 +24,44 @@ function matchPattern(pattern: string, path: string): URLPatternResult | undefin
   return match ?? undefined;
 }
 
+const THREAD_PATTERN = "/profile/:handleOrDid/post/:id";
+const PROFILE_PATTERN = "/profile/:didOrHandle";
+
 export function parseRoute(path: string): AppRoute {
   if (path === "/") return { id: "timeline" };
   if (path === "/notifications") return { id: "notifications" };
   if (path === "/feeds") return { id: "feed-list" };
   if (path === "/settings") return { id: "settings" };
 
-  const threadMatch = matchPattern("/profile/:handleOrDid/post/:id", path);
+  const threadMatch = matchPattern(THREAD_PATTERN, path);
   if (threadMatch) {
     const { handleOrDid, id } = threadMatch.pathname.groups;
     return { id: "thread", uri: `at://${handleOrDid}/app.bsky.feed.post/${id}` };
   }
 
-  const profileMatch = matchPattern("/profile/:didOrHandle", path);
+  const profileMatch = matchPattern(PROFILE_PATTERN, path);
   if (profileMatch) {
     const { didOrHandle } = profileMatch.pathname.groups;
     return { id: "profile", didOrHandle: didOrHandle! };
   }
 
   return { id: "not-found" };
+}
+
+export function atURIToInternal(uri: string) {
+  if (!uri.startsWith("at://")) throw new Error("not an AT URI!");
+  const [authority, collection, rkey] = uri.substring("at://".length).split("/");
+
+  if (collection === "app.bsky.feed.post") {
+    return `/profile/${authority}/post/${rkey}`;
+  }
+
+  return uri;
+}
+
+export function internalToAtURI(url: string) {
+  // TODO
+  return url;
 }
 
 export function navigateTo(path: string) {

@@ -15,8 +15,8 @@ import { createRecord, deleteRecord } from "../util/atp.ts";
 import { elem } from "../util/elem.ts";
 import { Ellipsis, Heart, icon, MessageCircle, Repeat2, Reply } from "../util/icons.ts";
 import { Subscribable } from "../util/subscribable.ts";
-import { formatRelativeTime } from "../util/temporal.ts";
-import { embed as renderEmbed } from "./embed.ts";
+import { age } from "./age.ts";
+import { embedMedia } from "./embed.ts";
 import { richText } from "./rich-text.ts";
 
 export type UIPostReply =
@@ -111,38 +111,7 @@ export function createPost(post: AppBskyFeedDefs.PostView, reply?: UIPostReply):
                 ])
               : elem("a", { className: "handle" }, ["[invalid handle]"]),
           ]),
-          elem("section", { className: "details" }, [
-            elem("time", { dateTime: createdAt.toISOString() }, [
-              formatRelativeTime(createdAt, new Date()),
-            ]).also(it => {
-              let age = Date.now() - createdAt.getTime();
-              const periods = [
-                [60 * 1000, 500],
-                [60 * 60 * 1000, 30_000],
-              ];
-
-              let intervalId: number | undefined;
-              let currentGroup: number | undefined;
-
-              const update = () => {
-                it.textContent = formatRelativeTime(createdAt, new Date());
-                age = Date.now() - createdAt.getTime();
-
-                for (const [ageCap, interval] of periods) {
-                  if (age < ageCap) {
-                    if (currentGroup !== ageCap) {
-                      if (intervalId) clearInterval(intervalId);
-                      intervalId = setInterval(update, interval);
-                      currentGroup = ageCap;
-                    }
-
-                    break;
-                  }
-                }
-              };
-              update();
-            }),
-          ]),
+          elem("section", { className: "details" }, [age(createdAt)]),
         ]),
         reply
           ? elem("span", { className: "reply-details" }, [
@@ -152,7 +121,7 @@ export function createPost(post: AppBskyFeedDefs.PostView, reply?: UIPostReply):
             ])
           : "",
         richText(record.text, record.facets),
-        post.embed?.tap(renderEmbed) ?? "",
+        ...(post.embed?.tap(embedMedia) ?? []),
         elem("section", { className: "controls" }, [
           elem("button", { className: "reply" }, [
             icon(MessageCircle),

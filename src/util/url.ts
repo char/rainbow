@@ -6,9 +6,9 @@ function coerceURL(url: URLLike): URL {
 
 export function url(
   path: string,
-  opts: { searchParams?: Record<string, string>; base: URLLike } = {},
+  opts: { searchParams?: Record<string, string>; base?: URLLike } = {},
 ) {
-  const url = new URL(path, opts.base ? coerceURL(opts.base) : undefined);
+  const url = new URL(path, opts.base?.tap(coerceURL));
   if (opts.searchParams)
     for (const [key, value] of Object.entries(opts.searchParams)) {
       url.searchParams.set(key, value);

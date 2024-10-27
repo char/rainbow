@@ -188,26 +188,3 @@
     --color: var(--col-accent);
   }
 }
-
-.post .embed {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  gap: 1em;
-  margin: 0.5em 0;
-  overflow-x: auto;
-  background-color: rgb(var(--col-bg-0) / 1);
-
-  &.images img {
-    aspect-ratio: var(--aspect-ratio);
-
-    border: 1px solid rgb(var(--col-bg-3) / 1);
-    border-radius: 8px;
-
-    min-width: 4em;
-    width: 100%;
-    max-height: 24em;
-    object-fit: contain;
-    pointer-events: all;
-  }
-}
