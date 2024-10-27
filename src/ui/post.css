@@ -196,6 +196,7 @@
   gap: 1em;
   margin: 0.5em 0;
   overflow-x: auto;
+  background-color: rgb(var(--col-bg-0) / 1);
 
   &.images img {
     aspect-ratio: var(--aspect-ratio);

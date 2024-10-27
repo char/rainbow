@@ -101,14 +101,13 @@ export function profilePage() {
     };
 
     const loadTimeline = async () => {
-      timeline.hide();
-      timeline = new Timeline();
-      timeline.show(profile);
-
       const { data: feedView } = await session!.xrpc.get("app.bsky.feed.getAuthorFeed", {
         params: { actor, filter: "posts_and_author_threads", limit: 30 },
       });
 
+      timeline.hide();
+      timeline = new Timeline();
+      timeline.show(profile);
       timeline.append(feedView.feed);
       timeline.cursor = feedView.cursor;
     };

@@ -86,7 +86,7 @@ export function createPost(post: AppBskyFeedDefs.PostView, reply?: UIPostReply):
   const createdAt = new Date(record.createdAt);
 
   const ownLike = new Subscribable<string | undefined>(post.viewer?.like);
-  const ownRepost = new Subscribable<string | undefined>(post.viewer?.like);
+  const ownRepost = new Subscribable<string | undefined>(post.viewer?.repost);
 
   const likeCount = new Subscribable(post.likeCount ?? 0);
   const repostCount = new Subscribable(post.repostCount ?? 0);
@@ -197,7 +197,7 @@ export function createPost(post: AppBskyFeedDefs.PostView, reply?: UIPostReply):
               }
             });
 
-            ownRepost.subscribe(uri => {
+            ownRepost.subscribeImmediate(uri => {
               if (uri) button.dataset.repost = uri;
               else delete button.dataset.repost;
             });
