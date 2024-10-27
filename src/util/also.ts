@@ -16,5 +16,5 @@ declare global {
   }
 }
 
-Object.prototype.also = also;
-Object.prototype.tap = tap;
+Object.defineProperty(Object.prototype, "also", { value: also, enumerable: false });
+Object.defineProperty(Object.prototype, "tap", { value: tap, enumerable: false });
