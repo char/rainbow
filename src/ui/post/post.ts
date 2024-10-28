@@ -250,3 +250,5 @@ export class Post {
     });
   }
 }
+
+Object.defineProperty(globalThis, "Post", { value: Post });

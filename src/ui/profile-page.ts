@@ -50,7 +50,7 @@ export function profilePage() {
   let profile: HTMLElement = elem("div");
 
   let lastActor: string | undefined;
-  let timeline = new Timeline();
+  let currentTimeline: Timeline | undefined;
   let details: Element = noneElem();
 
   route.subscribe(async route => {
@@ -68,7 +68,7 @@ export function profilePage() {
     // if we're returning to the last actor we loaded we can use the stuff we already rendered
     if (actor === lastActor) {
       select(app, "main").append(page);
-      timeline.show(profile);
+      currentTimeline?.show(profile);
     }
 
     lastActor = actor;
@@ -87,10 +87,11 @@ export function profilePage() {
         params: { actor, filter: "posts_and_author_threads", limit: 30 },
       });
 
-      timeline.hide();
-      timeline = new Timeline();
-      timeline.append(feedView.feed);
+      currentTimeline?.hide();
+      const timeline = new Timeline();
+      currentTimeline = timeline;
       timeline.cursor = feedView.cursor;
+      timeline.append(feedView.feed);
 
       timeline.loadMore = async cursor => {
         const { data: feedView } = await session!.xrpc.get("app.bsky.feed.getAuthorFeed", {

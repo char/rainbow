@@ -17,8 +17,10 @@ export class Timeline {
 
   hasMore: boolean = true;
   loadMore?: (cursor: string | undefined) => Promise<boolean> = undefined;
+  loadingDebounce: boolean = false;
 
   hide() {
+    this.observer?.unobserve(this.timelineEnd);
     this.container.remove();
   }
 
@@ -35,15 +37,16 @@ export class Timeline {
         entries => {
           if (!entries.some(it => it.isIntersecting)) return;
 
-          if (this.hasMore) {
+          if (this.hasMore && !this.loadingDebounce) {
             this.timelineEnd.textContent = "Fetching...";
-
+            this.loadingDebounce = true;
             this.loadMore?.(this.cursor)
               .then(hasMore => {
                 this.hasMore = hasMore;
               })
               .finally(() => {
                 this.timelineEnd.textContent = "End of timeline.";
+                this.loadingDebounce = false;
               });
           }
         },
