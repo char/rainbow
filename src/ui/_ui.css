@@ -1,7 +1,7 @@
 @import url(./header.css);
-@import url(./post.css);
-@import url(./rich-text.css);
+@import url(./post/embed.css);
+@import url(./post/post.css);
 @import url(./profile-page.css);
-@import url(./embed.css);
+@import url(./rich-text.css);
 
 @import url(./components/components.css);

@@ -1,4 +1,4 @@
-import { elem } from "../util/elem.ts";
+import { elem } from "../../util/elem.ts";
 
 const rtf = new Intl.RelativeTimeFormat("en", { numeric: "always", style: "narrow" });
 

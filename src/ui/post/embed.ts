@@ -5,10 +5,10 @@ import type {
   AppBskyFeedDefs,
   AppBskyFeedPost,
 } from "@atcute/client/lexicons";
-import { normalizePostURIInternal } from "../state/post-store.ts";
-import { elem, noneElem } from "../util/elem.ts";
+import { elem, noneElem } from "../../util/elem.ts";
+import { richText } from "../rich-text.ts";
 import { age } from "./age.ts";
-import { richText } from "./rich-text.ts";
+import { normalizePostURIInternal } from "./post.ts";
 
 export function embedImages(media: AppBskyEmbedImages.View): HTMLElement {
   const container = elem("div", { className: "images" });

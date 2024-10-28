@@ -1,14 +1,14 @@
 import type { AppBskyFeedDefs } from "@atcute/client/lexicons";
 import { route } from "../navigation.ts";
 import { session } from "../session.ts";
-import { post, type UIPostData } from "../state/post-store.ts";
 import { elem } from "../util/elem.ts";
 import { select } from "../util/select.ts";
 import { app } from "./_ui.ts";
-import { feedReply } from "./post.ts";
+import { Post } from "./post/post.ts";
+import { feedReply } from "./post/reply.ts";
 
 export class Timeline {
-  posts: UIPostData[] = [];
+  posts: Post[] = [];
   container: HTMLElement = elem("section", { className: "timeline" });
   cursor: string | undefined;
 
@@ -25,7 +25,7 @@ export class Timeline {
 
   append(feed: AppBskyFeedDefs.FeedViewPost[]) {
     for (const feedPost of feed) {
-      const postObj = post(feedPost.post, feedPost.reply?.parent?.tap(feedReply));
+      const postObj = Post.get(feedPost.post, feedPost.reply?.parent?.tap(feedReply));
       this.posts.push(postObj);
       this.container.append(postObj.article);
     }

@@ -1,25 +1,25 @@
 import type { AppBskyFeedGetPostThread } from "@atcute/client/lexicons";
 import { route } from "../navigation.ts";
 import { session } from "../session.ts";
-import { $posts, post, type UIPostData } from "../state/post-store.ts";
 import { elem } from "../util/elem.ts";
 import { select } from "../util/select.ts";
 import { setClass } from "../util/set-class.ts";
 import { app } from "./_ui.ts";
-import { threadReply } from "./post.ts";
+import { Post } from "./post/post.ts";
+import { threadReply } from "./post/reply.ts";
 
-export function sortPosts(posts: UIPostData[]) {
+export function sortPosts(posts: Post[]) {
   // TODO: follower priority for sorting?
   posts.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
 }
 
-export function buildThread(threadView: AppBskyFeedGetPostThread.Output["thread"]): UIPostData {
+export function buildThread(threadView: AppBskyFeedGetPostThread.Output["thread"]): Post {
   if (threadView.$type !== "app.bsky.feed.defs#threadViewPost") throw new Error("TODO");
 
-  const root = post(threadView.post, threadView.parent?.tap(threadReply));
+  const root = Post.get(threadView.post, threadView.parent?.tap(threadReply));
   setClass(root.article, "active", true);
 
-  type ThreadData = { threadView: typeof threadView; post: UIPostData };
+  type ThreadData = { threadView: typeof threadView; post: Post };
   const threadData = { threadView, post: root };
 
   let current: ThreadData | undefined = threadData;
@@ -29,7 +29,7 @@ export function buildThread(threadView: AppBskyFeedGetPostThread.Output["thread"
     if (current.threadView.parent?.$type === "app.bsky.feed.defs#threadViewPost") {
       parent = {
         threadView: current.threadView.parent,
-        post: post(
+        post: Post.get(
           current.threadView.parent.post,
           current.threadView.parent.parent?.tap(threadReply),
         ),
@@ -56,7 +56,7 @@ export function buildThread(threadView: AppBskyFeedGetPostThread.Output["thread"
         if (reply.$type === "app.bsky.feed.defs#threadViewPost") {
           const replyThread: ThreadData = {
             threadView: reply,
-            post: post(reply.post, threadReply(thread.threadView)),
+            post: Post.get(reply.post, threadReply(thread.threadView)),
           };
           setClass(replyThread.post.article, "active", false);
           setClass(replyThread.post.article, "top-reply", isTopReply);
@@ -78,14 +78,14 @@ export function buildThread(threadView: AppBskyFeedGetPostThread.Output["thread"
   return root;
 }
 
-export function renderThread(page: HTMLElement, root: UIPostData) {
+export function renderThread(page: HTMLElement, root: Post) {
   page.append(root.article);
   setClass(root.article, "active", true);
 
   // render ancestors
-  let current: UIPostData | undefined = root;
+  let current: Post | undefined = root;
   while (current) {
-    const parent: UIPostData | undefined = current.hierarchy.parent;
+    const parent: Post | undefined = current.hierarchy.parent;
     if (parent) {
       current.article.insertAdjacentElement("beforebegin", parent.article);
       setClass(parent.article, "active", false);
@@ -95,7 +95,7 @@ export function renderThread(page: HTMLElement, root: UIPostData) {
     current = parent;
   }
 
-  const addReplies = (post: UIPostData) => {
+  const addReplies = (post: Post) => {
     let isTopReply = true;
     for (const child of [...post.hierarchy.replies].also(sortPosts)) {
       setClass(child.article, "active", false);
