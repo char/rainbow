@@ -37,13 +37,14 @@ export class Post {
   static store = new Map<string, Post>();
   static get(post: AppBskyFeedDefs.PostView, reply?: PostReply) {
     const uri = normalizePostURI(post);
-    return this.store.get(uri) ?? new Post(post, reply);
+    return this.store.get(uri) ?? new Post(post, reply).also(p => this.store.set(uri, p));
   }
 
   uri: string;
   createdAt: Date;
 
   view: AppBskyFeedDefs.PostView;
+  reply?: PostReply;
 
   author: PostAuthor;
 
@@ -64,9 +65,9 @@ export class Post {
   };
 
   constructor(post: AppBskyFeedDefs.PostView, reply?: PostReply) {
-    this.view = post;
     this.uri = normalizePostURI(post);
-    Post.store.set(this.uri, this);
+    this.view = post;
+    this.reply = reply;
 
     const record = post.record as AppBskyFeedPost.Record;
     if (record.$type !== "app.bsky.feed.post") throw new Error();

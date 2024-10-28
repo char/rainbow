@@ -41,4 +41,10 @@ export class LateSubscribable<T> extends SubscribableBase<T | undefined, T> {
   constructor() {
     super(undefined);
   }
+
+  subscribeImmediate(listener: Subscription<T>): ReturnType<typeof this.subscribe> {
+    const value = this.get();
+    if (value) listener(value);
+    return this.subscribe(listener);
+  }
 }

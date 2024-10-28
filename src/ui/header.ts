@@ -26,7 +26,7 @@ export function profile() {
   ]);
   const profileWrapper = elem("a", { className: "contents" }, [profile]);
 
-  selfProfile.subscribe(self => {
+  selfProfile.subscribeImmediate(self => {
     profileWrapper.href = `/profile/${self.handle}`;
 
     const displayName = select(profile, "#display-name");
