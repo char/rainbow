@@ -13,7 +13,6 @@ rainbow-blur {
 
   transition-property: --blur-amount, backdrop-filter;
   transition-duration: 0.25s;
-  transition-timing-function: ease-in-out;
 
   &::after {
     content: "";

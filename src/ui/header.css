@@ -28,6 +28,8 @@
     padding: 0.5em 8px;
     border-radius: 8px;
 
+    transition: background-color 250ms;
+
     &:hover {
       background-color: rgb(var(--col-bg-2) / 1);
     }
@@ -47,8 +49,17 @@
   border-radius: 8px;
   height: 3em;
 
+  background-color: rgb(var(--col-bg-1) / 1);
+  padding: 0.25em 0.75em;
+
+  transition: background-color 250ms;
+
+  .avatar {
+    height: 32px;
+  }
+
   &:hover {
-    background-color: rgb(var(--col-bg-2) / 1);
+    background-color: rgb(var(--col-bg-3) / 1);
   }
 
   #name {

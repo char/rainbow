@@ -37,7 +37,10 @@ export class Post {
   static store = new Map<string, Post>();
   static get(post: AppBskyFeedDefs.PostView, reply?: PostReply) {
     const uri = normalizePostURI(post);
-    return this.store.get(uri) ?? new Post(post, reply).also(p => this.store.set(uri, p));
+    return (
+      this.store.get(uri)?.also(p => p.update(post)) ??
+      new Post(post, reply).also(p => this.store.set(uri, p))
+    );
   }
 
   uri: string;
@@ -132,6 +135,15 @@ export class Post {
     this.article.dataset.author = post.author.did;
 
     this.#setupLink();
+  }
+
+  update(newView: AppBskyFeedDefs.PostView) {
+    this.view = newView;
+    this.ownLike.set(newView.viewer?.like);
+    this.ownRepost.set(newView.viewer?.repost);
+    this.likeCount.set(newView.likeCount ?? 0);
+    this.repostCount.set(newView.repostCount ?? 0);
+    this.replyCount.set(newView.repostCount ?? 0);
   }
 
   #setupControls(): HTMLElement {
