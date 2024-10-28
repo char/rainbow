@@ -123,7 +123,7 @@ export function threadPage() {
 
     page.innerHTML = "";
 
-    const eagerPost = $posts.get(route.uri);
+    const eagerPost = Post.store.get(route.uri);
     if (eagerPost) {
       renderThread(page, eagerPost);
     }

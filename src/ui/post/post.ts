@@ -1,5 +1,6 @@
 import type { AppBskyFeedDefs, AppBskyFeedPost, At } from "@atcute/client/lexicons";
 import { moderatePost, type ModerationResult } from "../../moderation/mod.ts";
+import { navigateTo } from "../../navigation.ts";
 import { session } from "../../session.ts";
 import { moderationRules } from "../../state/labelers.ts";
 import { createRecord, deleteRecord } from "../../util/atp.ts";
@@ -124,6 +125,11 @@ export class Post {
         this.#setupControls(),
       ]),
     ]);
+
+    this.article.dataset.uri = post.uri;
+    this.article.dataset.author = post.author.did;
+
+    this.#setupLink();
   }
 
   #setupControls(): HTMLElement {
@@ -220,5 +226,26 @@ export class Post {
       }),
       elem("button", { className: "more" }, [icon(Ellipsis)]),
     ]);
+  }
+
+  #setupLink() {
+    let mouseDownTime = 0;
+    this.article.addEventListener("pointerdown", () => {
+      mouseDownTime = performance.now();
+    });
+    this.article.addEventListener("click", e => {
+      const isNotLink = this.article.dataset.noLink !== undefined;
+      if (isNotLink) return;
+
+      if (e.target instanceof HTMLElement && e.target.closest("a") !== null) return;
+      if (e.ctrlKey || e.button !== 0) return;
+
+      const deltaTime = performance.now() - mouseDownTime;
+      if (deltaTime > 200) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+      navigateTo(normalizePostURIInternal(this.view));
+    });
   }
 }
