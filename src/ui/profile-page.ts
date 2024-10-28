@@ -89,9 +89,19 @@ export function profilePage() {
 
       timeline.hide();
       timeline = new Timeline();
-      timeline.show(profile);
       timeline.append(feedView.feed);
       timeline.cursor = feedView.cursor;
+
+      timeline.loadMore = async cursor => {
+        const { data: feedView } = await session!.xrpc.get("app.bsky.feed.getAuthorFeed", {
+          params: { actor, filter: "posts_and_author_threads", limit: 30, cursor },
+        });
+        timeline.cursor = feedView.cursor;
+        timeline.append(feedView.feed);
+        return feedView.feed.length > 0;
+      };
+
+      timeline.show(profile);
     };
 
     await Promise.all([showProfileDetails(), loadTimeline()]);

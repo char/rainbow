@@ -91,21 +91,6 @@
   }
 }
 
-.timeline {
-  display: flex;
-  flex-direction: column;
-  background-color: rgb(var(--col-bg-3) / 1);
-  border-radius: 8px;
-}
-
-.timeline .post + .post {
-  margin-top: 1px;
-}
-
-.timeline:has(*) {
-  padding: 1px;
-}
-
 .post.active {
   background-color: rgb(var(--col-bg-2) / 1);
 }
@@ -143,16 +128,6 @@
 .post.has-reply.top-reply > aside::before {
   height: calc(100% + 1em + 16px);
   top: -16px;
-}
-
-.post:first-child {
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-}
-
-.post:last-child {
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
 }
 
 .post + .post {
