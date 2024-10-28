@@ -5,18 +5,9 @@
     "jsr:@std/bytes@^1.0.2": "1.0.2",
     "jsr:@std/dotenv@0.225.2": "0.225.2",
     "jsr:@std/encoding@^1.0.5": "1.0.5",
-    "jsr:@std/path@1": "1.0.6",
-    "jsr:@std/path@^1.0.6": "1.0.6",
-    "npm:@atcute/bluesky-richtext-segmenter@1": "1.0.0_@atcute+bluesky@1.0.7__@atcute+client@1.0.0_@atcute+client@1.0.0",
-    "npm:@atcute/client@1": "1.0.0",
-    "npm:@atcute/client@2": "2.0.3",
-    "npm:@atcute/oauth-browser-client@1": "1.0.3",
-    "npm:esbuild@0.24": "0.24.0",
-    "npm:hotscript@*": "1.0.13",
-    "npm:lucide-static@0.429.0": "0.429.0",
-    "npm:simple-icons@*": "13.6.0",
-    "npm:simple-icons@13.6.0": "13.6.0",
-    "npm:urlpattern-polyfill@*": "10.0.0"
+    "jsr:@std/path@1": "1.0.7",
+    "jsr:@std/path@^1.0.6": "1.0.7",
+    "npm:esbuild@0.24": "0.24.0"
   },
   "jsr": {
     "@luca/esbuild-deno-loader@0.11.0": {
@@ -36,37 +27,11 @@
     "@std/encoding@1.0.5": {
       "integrity": "ecf363d4fc25bd85bd915ff6733a7e79b67e0e7806334af15f4645c569fefc04"
     },
-    "@std/path@1.0.6": {
-      "integrity": "ab2c55f902b380cf28e0eec501b4906e4c1960d13f00e11cfbcd21de15f18fed"
+    "@std/path@1.0.7": {
+      "integrity": "76a689e07f0e15dcc6002ec39d0866797e7156629212b28f27179b8a5c3b33a1"
     }
   },
   "npm": {
-    "@atcute/bluesky-richtext-segmenter@1.0.0_@atcute+bluesky@1.0.7__@atcute+client@1.0.0_@atcute+client@1.0.0": {
-      "integrity": "sha512-Gymz5IxcFMRL7MwsXWeEL2bjsYa0oq3Wo1o7mpr0qOUGhjxbyEWPJr1+d+NIpXAZG0QiIgyKTCLZvmN/Ovj1SQ==",
-      "dependencies": [
-        "@atcute/bluesky",
-        "@atcute/client@1.0.0"
-      ]
-    },
-    "@atcute/bluesky@1.0.7_@atcute+client@1.0.0": {
-      "integrity": "sha512-2jPHzl7WbcqRtcAXanJy4Lp638ujqnoGmPCPmBlmpEDP34D7EVKQqjN/mlvglb5n539dThA9xlSgIS8yOxwzDA==",
-      "dependencies": [
-        "@atcute/client@1.0.0"
-      ]
-    },
-    "@atcute/client@1.0.0": {
-      "integrity": "sha512-C9Xvl1vaCjy6xLRE/uprDgWyyp/efM0HDqkeROcUSA1nuIEYL1wXqbMRFiwT6y9b81GHO8GAJ+p/pEDGIHOJ0A=="
-    },
-    "@atcute/client@2.0.3": {
-      "integrity": "sha512-j9GryA5l+4F0BTQWa6/1XmsuSPSq+bqNCY3mrHUGD592hMqUZxgpYDLgRWL+719V287AW/56AwvFYlbjlENp7A=="
-    },
-    "@atcute/oauth-browser-client@1.0.3": {
-      "integrity": "sha512-fsuwwoSgO+33axF8PJtXIu1n461hCO6MkGN2b7lvxSiAWOioOQ1QV5SDxyJa3JkUyR9Rit4eLjc+3XOEiipAoQ==",
-      "dependencies": [
-        "@atcute/client@2.0.3",
-        "nanoid"
-      ]
-    },
     "@esbuild/aix-ppc64@0.24.0": {
       "integrity": "sha512-WtKdFM7ls47zkKHFVzMz8opM7LkcsIp9amDUBIAWirg70RM71WRSjdILPsY5Uv1D42ZpUfaPILDlfactHgsRkw=="
     },
@@ -167,21 +132,6 @@
         "@esbuild/win32-ia32",
         "@esbuild/win32-x64"
       ]
-    },
-    "hotscript@1.0.13": {
-      "integrity": "sha512-C++tTF1GqkGYecL+2S1wJTfoH6APGAsbb7PAWQ3iVIwgG/EFseAfEVOKFgAFq4yK3+6j1EjUD4UQ9dRJHX/sSQ=="
-    },
-    "lucide-static@0.429.0": {
-      "integrity": "sha512-S/FzhfA/EzI0gyxz2Ta/yIdIDmWXq96dLWUpIKNreg7/WqFsgZ86/h/7XJ9phhIQWd2TeICiFV3rrhsK4CQMaQ=="
-    },
-    "nanoid@5.0.7": {
-      "integrity": "sha512-oLxFY2gd2IqnjcYyOXD8XGCftpGtZP2AbHbOkthDkvRywH5ayNtPVy9YlOPcHckXzbLTCHpkb7FB+yuxKV13pQ=="
-    },
-    "simple-icons@13.6.0": {
-      "integrity": "sha512-hKhxwp9SDjMjEE+aFL3gzh2XZBQSN5xlIygpsKgiMcn+65BtWoUIS0nmIkmDQ15Ge+2AXGfHCrjn5vE55UdjDg=="
-    },
-    "urlpattern-polyfill@10.0.0": {
-      "integrity": "sha512-H/A06tKD7sS1O1X2SshBVeA5FLycRpjqiBeqGKmBwBDBy28EnRjORxTNe269KSSr5un5qyWi1iL61wLxpd+ZOg=="
     }
   },
   "workspace": {

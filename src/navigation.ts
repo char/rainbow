@@ -48,22 +48,6 @@ export function parseRoute(path: string): AppRoute {
   return { id: "not-found" };
 }
 
-export function atURIToInternal(uri: string) {
-  if (!uri.startsWith("at://")) throw new Error("not an AT URI!");
-  const [authority, collection, rkey] = uri.substring("at://".length).split("/");
-
-  if (collection === "app.bsky.feed.post") {
-    return `/profile/${authority}/post/${rkey}`;
-  }
-
-  return uri;
-}
-
-export function internalToAtURI(url: string) {
-  // TODO
-  return url;
-}
-
 export function navigateTo(path: string) {
   const parsedRoute = parseRoute(path);
   routeEarly.set({ from: location.pathname, to: path, route: parsedRoute });

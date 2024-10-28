@@ -3,3 +3,5 @@
 @import url(./rich-text.css);
 @import url(./profile-page.css);
 @import url(./embed.css);
+
+@import url(./components/components.css);

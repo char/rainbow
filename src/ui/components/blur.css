@@ -1,0 +1,35 @@
+@property --blur-amount {
+  syntax: "<percentage>";
+  initial-value: 0;
+  inherits: true;
+}
+
+rainbow-blur {
+  --blur-amount: 1;
+
+  display: block;
+  cursor: pointer;
+  position: relative;
+
+  transition-property: --blur-amount, backdrop-filter;
+  transition-duration: 0.25s;
+  transition-timing-function: ease-in-out;
+
+  &::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+
+    transition: inherit;
+
+    backdrop-filter: blur(calc(var(--blur-amount) * 60px));
+    pointer-events: none;
+  }
+}
+
+rainbow-blur[data-unblur] {
+  --blur-amount: 0;
+}

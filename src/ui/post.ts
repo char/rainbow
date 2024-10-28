@@ -3,8 +3,10 @@ import type {
   AppBskyFeedDefs,
   AppBskyFeedPost,
 } from "@atcute/client/lexicons";
+import { moderatePost, moderationBehavior } from "../moderation/mod.ts";
 import { navigateTo } from "../navigation.ts";
 import { session } from "../session.ts";
+import { moderationRules } from "../state/labelers.ts";
 import {
   $posts,
   normalizePostURI,
@@ -72,6 +74,23 @@ function replyAuthor(reply: UIPostReply): HTMLElement {
 }
 
 export function createPost(post: AppBskyFeedDefs.PostView, reply?: UIPostReply): UIPostData {
+  const moderation = [...moderatePost(moderationRules, post)];
+  const moderationBehaviors = (
+    [
+      "profile-list",
+      "profile-view",
+      "profile-media",
+      "content-list",
+      "content-view",
+      "content-media",
+    ] as const
+  )
+    .map(it => [it, moderationBehavior(moderation, it)])
+    .tap(Object.fromEntries);
+
+  // TODO: figure out what to do with these
+  console.log({ post, moderationBehaviors });
+
   const record = post.record as AppBskyFeedPost.Record;
 
   const author = {
@@ -101,7 +120,7 @@ export function createPost(post: AppBskyFeedDefs.PostView, reply?: UIPostReply):
           elem("img", { className: "avatar", src: author.avatar, loading: "lazy" }),
         ]),
       ]),
-      elem("section", {}, [
+      elem("section", { className: "post-main" }, [
         elem("div", { className: "topline" }, [
           elem("section", { className: "author" }, [
             ...(author.displayName ? [elem("strong", {}, [author.displayName]), " "] : []),
@@ -120,8 +139,10 @@ export function createPost(post: AppBskyFeedDefs.PostView, reply?: UIPostReply):
               replyAuthor(reply),
             ])
           : "",
-        richText(record.text, record.facets),
-        ...(post.embed?.tap(embedMedia) ?? []),
+        elem("section", { className: "post-body" }, [
+          richText(record.text, record.facets),
+          ...(post.embed?.tap(embedMedia) ?? []),
+        ]),
         elem("section", { className: "controls" }, [
           elem("button", { className: "reply" }, [
             icon(MessageCircle),

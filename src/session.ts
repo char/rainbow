@@ -1,6 +1,8 @@
 import * as atcute from "@atcute/client";
 import { At } from "@atcute/client/lexicons";
+import { mergeHeaders } from "@atcute/client/utils/http";
 import * as oauth from "npm:@atcute/oauth-browser-client@1";
+import { BSKY_MODERATION, labelerServiceIDs } from "./state/labelers.ts";
 
 oauth.configureOAuth({
   metadata: {
@@ -51,7 +53,18 @@ export const loadSession = async (
   const handle = await resolveDIDWithCache(did);
 
   const agent = new oauth.OAuthUserAgent(oauthSession);
-  const xrpc = new atcute.XRPC({ handler: agent });
+  const handler = async (path: string, init: RequestInit) => {
+    init.headers = mergeHeaders(init.headers, {
+      "atproto-accept-labelers": labelerServiceIDs
+        .get()
+        .map(it => (it === BSKY_MODERATION ? `${it};redact` : it)) // TODO: make this configurable
+        .join(", "),
+    });
+
+    return await agent.handle(path, init);
+  };
+
+  const xrpc = new atcute.XRPC({ handler });
 
   return { did, handle, session: oauthSession, xrpc };
 };

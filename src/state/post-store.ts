@@ -28,16 +28,18 @@ export interface UIPostData {
 
 // TODO: evict posts from store when we don't need them
 export const $posts = new Map<string, UIPostData>();
-Object.defineProperty(globalThis, "$posts", { value: $posts });
 
-export function normalizePostURI(post: AppBskyFeedDefs.PostView) {
+export function normalizePostURI(post: Pick<AppBskyFeedDefs.PostView, "uri" | "author">) {
   const handle = post.author.handle === "handle.invalid" ? undefined : post.author.handle;
   return `at://${handle ?? post.author.did}/app.bsky.feed.post/${post.uri.split("/").pop()}`;
 }
 
-export function normalizePostURIInternal(post: AppBskyFeedDefs.PostView) {
+export function normalizePostURIInternal(
+  post: Pick<AppBskyFeedDefs.PostView, "uri" | "author">,
+) {
   const handle = post.author.handle === "handle.invalid" ? undefined : post.author.handle;
-  return `/profile/${handle ?? post.author.did}/post/${post.uri.split("/").pop()}`;
+  const rkey = post.uri.split("/").pop()!;
+  return `/profile/${handle ?? post.author.did}/post/${rkey}`;
 }
 
 export function post(post: AppBskyFeedDefs.PostView, reply?: UIPostReply): UIPostData {

@@ -1,7 +1,7 @@
-import * as esbuild from "npm:esbuild@0.24";
 import { denoPlugins } from "jsr:@luca/esbuild-deno-loader@0.11";
 import * as dotenv from "jsr:@std/dotenv@0.225.2";
 import * as path from "jsr:@std/path@1";
+import * as esbuild from "npm:esbuild@0.24";
 
 export const envPlugin = (files: string[] = [".env", ".env.local"]): esbuild.Plugin => ({
   name: "env",

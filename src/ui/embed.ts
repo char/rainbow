@@ -5,7 +5,7 @@ import type {
   AppBskyFeedDefs,
   AppBskyFeedPost,
 } from "@atcute/client/lexicons";
-import { atURIToInternal } from "../navigation.ts";
+import { normalizePostURIInternal } from "../state/post-store.ts";
 import { elem, noneElem } from "../util/elem.ts";
 import { age } from "./age.ts";
 import { richText } from "./rich-text.ts";
@@ -26,6 +26,7 @@ export function embedImages(media: AppBskyEmbedImages.View): HTMLElement {
       );
     container.append(img);
   }
+  // return elem("rainbow-blur", {}, [container], { dataset: { unblur: "" } });
   return container;
 }
 
@@ -34,9 +35,15 @@ export function embedCard(external: AppBskyEmbedExternal.View["external"]): HTML
     elem("a", { className: "contents", target: "_blank", href: external.uri }, [
       elem("section", {}, [
         external.thumb ? elem("img", { src: external.thumb }, []) : "",
-        elem("h3", {}, [external.title]),
-        elem("p", {}, [
-          external.description ? external.description : new URL(external.uri).hostname,
+        elem("div", {}, [
+          elem("h3", {}, [external.title ? external.title : new URL(external.uri).hostname]),
+          elem("p", {}, [
+            external.description
+              ? external.description
+              : external.title
+                ? new URL(external.uri).hostname
+                : external.uri,
+          ]),
         ]),
       ]),
     ]),
@@ -48,7 +55,7 @@ export function embedQuote(record: AppBskyEmbedRecord.ViewRecord): HTMLElement {
   const quoteRecord = record.value as AppBskyFeedPost.Record;
 
   return elem("div", { className: "quote" }, [
-    elem("a", { className: "contents", href: atURIToInternal(record.uri) }, [
+    elem("a", { className: "contents", href: normalizePostURIInternal(record) }, [
       elem("div", { className: "topline" }, [
         elem("img", { className: "avatar", src: author.avatar }),
         elem("div", {}, [
