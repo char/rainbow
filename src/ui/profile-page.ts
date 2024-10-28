@@ -4,8 +4,6 @@ import { session } from "../session.ts";
 import { elem, noneElem } from "../util/elem.ts";
 import { select } from "../util/select.ts";
 import { app } from "./_ui.ts";
-import { Post } from "./post/post.ts";
-import { feedReply } from "./post/reply.ts";
 import { richText } from "./rich-text.ts";
 import { Timeline } from "./timeline.ts";
 
@@ -45,24 +43,6 @@ export function profileDetails(
   ]);
 
   return article;
-}
-
-export function profileTimeline(actor: string): HTMLElement {
-  const section = elem("section", { className: "timeline" });
-
-  // TOOD: use a real Timeline object here
-
-  session!.xrpc
-    .get("app.bsky.feed.getAuthorFeed", {
-      params: { actor, filter: "posts_and_author_threads", limit: 30 },
-    })
-    .then(({ data: feedView }) => {
-      for (const postView of feedView.feed) {
-        section.append(Post.get(postView.post, postView.reply?.parent?.tap(feedReply)).article);
-      }
-    });
-
-  return section;
 }
 
 export function profilePage() {

@@ -6,7 +6,7 @@ html {
   font-family: var(--inter), "Noto Color Emoji", sans-serif;
   font-feature-settings:
     "liga" 1,
-    "calt" 1;
+    "calt" 0;
 }
 @supports (font-variation-settings: normal) {
   html {

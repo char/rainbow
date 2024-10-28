@@ -1,15 +1,37 @@
 .post {
   background-color: rgb(var(--col-bg-0) / 1);
 
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-areas:
+    ".     reason"
+    "aside post-main"
+    "aside post-main";
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto auto;
+
   align-items: stretch;
-  gap: 1em;
   padding: 1em;
   padding-bottom: 0.5em;
 
   &:not([data-no-link]) {
     cursor: pointer;
+  }
+
+  & > aside {
+    grid-area: aside;
+    margin-right: 1em;
+  }
+  & > .post-main {
+    grid-area: post-main;
+  }
+  & > .reason {
+    grid-area: reason;
+    margin-bottom: 1em;
+
+    display: none;
+    &:has(*) {
+      display: block;
+    }
   }
 
   .topline {
@@ -56,10 +78,10 @@
     margin-bottom: 0.25em;
     margin-top: 0.25em;
 
-    .lucide {
+    .lucide-reply {
       height: 1em;
       vertical-align: text-top;
-      margin-left: -4px;
+      margin-left: -5px;
     }
   }
 

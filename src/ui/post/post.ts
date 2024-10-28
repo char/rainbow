@@ -90,6 +90,7 @@ export class Post {
     this.moderation = [...moderatePost(moderationRules, post)];
 
     this.article = elem("article", { className: "post" }, [
+      elem("div", { className: "reason" }, []),
       elem("aside", {}, [
         elem(
           "a",

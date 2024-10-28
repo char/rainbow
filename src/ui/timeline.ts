@@ -17,23 +17,22 @@ export class Timeline {
   }
 
   show(elem: Element) {
-    this.container.replaceChildren(
-      ...this.posts.map(p => p.article.also(a => (a.className = "post"))),
-    );
+    for (const post of this.posts) post.article.className = "post";
+    this.container.replaceChildren(...this.posts.map(p => p.article));
     elem.append(this.container);
   }
 
   append(feed: AppBskyFeedDefs.FeedViewPost[]) {
     for (const feedPost of feed) {
-      const postObj = Post.get(feedPost.post, feedPost.reply?.parent?.tap(feedReply));
-      this.posts.push(postObj);
-      this.container.append(postObj.article);
+      const post = Post.get(feedPost.post, feedPost.reply?.parent?.tap(feedReply));
+      this.posts.push(post);
+      this.container.append(post.article);
     }
   }
 }
 
 export function timeline() {
-  const timeline = new Timeline();
+  let timeline = new Timeline();
 
   route.subscribe(async route => {
     if (route.id !== "timeline") {
@@ -47,7 +46,11 @@ export function timeline() {
     } = await session!.xrpc.get("app.bsky.feed.getTimeline", {
       params: { limit: 30 },
     });
+    timeline.hide();
+
+    timeline = new Timeline();
     timeline.cursor = cursor;
     timeline.append(feed);
+    timeline.show(select(app, "main"));
   });
 }

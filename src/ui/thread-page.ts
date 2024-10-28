@@ -134,7 +134,7 @@ export function threadPage() {
     const pageBoundingRect = page.getBoundingClientRect();
     if (earlyBoundingRect) {
       // 1px gap for psuedo-border
-      scrollTo(0, earlyBoundingRect.y - pageBoundingRect.y - 1);
+      scrollTo(0, earlyBoundingRect.y - pageBoundingRect.y - 0.5);
     }
 
     const { data: threadView } = await session!.xrpc.get("app.bsky.feed.getPostThread", {
@@ -149,7 +149,7 @@ export function threadPage() {
     if (eagerPost) {
       const postRect = eagerPost.article.getBoundingClientRect();
       const delta = postRect.y + 1 - (earlyBoundingRect?.y ?? 0);
-      scrollTo(0, scrollY + delta);
+      scrollTo(0, scrollY + delta - 0.5);
     }
   });
 }
