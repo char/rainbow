@@ -1,6 +1,6 @@
 #app {
   display: grid;
-  grid-template-columns: minmax(0, 250px) 3fr minmax(0, 250px);
+  grid-template-columns: minmax(0, 14em) 3fr minmax(0, 14em);
   max-width: 1350px;
 
   overflow-x: clip;

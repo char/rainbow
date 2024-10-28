@@ -81,27 +81,32 @@ export class Timeline {
 }
 
 export function timeline() {
-  const timeline = new Timeline();
-
-  timeline.loadMore = async () => {
-    const {
-      data: { feed, cursor },
-    } = await session!.xrpc.get("app.bsky.feed.getTimeline", {
-      params: { limit: 30, cursor: timeline.cursor },
-    });
-    timeline.cursor = cursor;
-    timeline.append(feed);
-
-    return feed.length > 0;
-  };
-  timeline.loadMore?.(undefined);
+  let currentTimeline: Timeline | undefined;
 
   route.subscribe(async route => {
     if (route.id !== "timeline") {
-      timeline.hide();
+      currentTimeline?.hide();
       return;
     }
 
+    currentTimeline?.show(select(app, "main"));
+
+    const timeline = new Timeline();
+    timeline.loadMore = async (cursor_: string | undefined) => {
+      const {
+        data: { feed, cursor },
+      } = await session!.xrpc.get("app.bsky.feed.getTimeline", {
+        params: { limit: 30, cursor: cursor_ },
+      });
+      timeline.cursor = cursor;
+      timeline.append(feed);
+
+      return feed.length > 0;
+    };
+    await timeline.loadMore?.(undefined);
+
+    currentTimeline?.hide();
+    currentTimeline = timeline;
     timeline.show(select(app, "main"));
   });
 }

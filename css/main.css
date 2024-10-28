@@ -27,7 +27,7 @@ img {
 img.avatar {
   height: 42px;
   aspect-ratio: 1;
-  border-radius: 50%;
+  clip-path: circle(50%);
 }
 
 .contents {
