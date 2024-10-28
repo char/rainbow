@@ -1,5 +1,4 @@
-#app,
-#animation-overlay-fake-app {
+#app {
   display: grid;
   grid-template-columns: minmax(0, 14em) 3fr minmax(0, 14em);
   max-width: 1350px;
