@@ -1,4 +1,4 @@
-import type { ComAtprotoRepoCreateRecord, Records } from "@atcute/client/lexicons";
+import type { At, ComAtprotoRepoCreateRecord, Records } from "@atcute/client/lexicons";
 import { session } from "../session.ts";
 
 type RecordType = keyof Records;
@@ -29,4 +29,11 @@ export interface DeleteRecordOptions<K extends RecordType> {
 
 export async function deleteRecord<K extends RecordType>(options: DeleteRecordOptions<K>) {
   await session!.xrpc.call("com.atproto.repo.deleteRecord", { data: options });
+}
+
+export async function resolveHandle(handle: string): Promise<At.DID> {
+  const response = await session!.xrpc.get("com.atproto.identity.resolveHandle", {
+    params: { handle },
+  });
+  return response.data.did;
 }

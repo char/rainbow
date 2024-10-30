@@ -5,6 +5,7 @@ import { threadPage } from "./thread-page.ts";
 import { timeline } from "./timeline.ts";
 
 import "./components/components.ts";
+import { compose } from "./compose.ts";
 
 export const app = document.querySelector("#app")!;
 
@@ -15,4 +16,6 @@ export function ui() {
   threadPage();
 
   debugUI();
+
+  compose();
 }

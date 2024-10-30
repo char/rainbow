@@ -43,7 +43,7 @@ label {
 }
 
 form button {
-  display: block;
+  display: inline-block;
   padding: 0.75em 1.5em;
   margin: 0;
 
@@ -60,5 +60,27 @@ form button {
   &:hover {
     border-color: rgb(var(--col-accent) / 0.5);
     background-color: rgb(var(--col-accent-muted) / 0.5);
+  }
+}
+
+textarea {
+  appearance: none;
+  resize: none;
+  width: calc(100% - 2em);
+  height: 100%;
+  min-height: 4em;
+  font-family: var(--inter);
+  background-color: rgb(var(--col-bg-1) / 1);
+  color: var(--col-fg-1);
+  font-size: 16px;
+  padding: 1em;
+  outline: none;
+  border: 1px solid rgb(var(--col-bg-3) / 1);
+  border-radius: 4px;
+
+  transition-property: border-color;
+
+  &:focus {
+    border-color: rgb(var(--col-accent) / 0.75);
   }
 }

@@ -18,7 +18,7 @@
       margin: 0 -1em;
       object-fit: cover;
       aspect-ratio: 3 / 1;
-      border-radius: 8px;
+      clip-path: inset(0% round 8px 8px 12px 12px);
     }
 
     .avatar {

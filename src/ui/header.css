@@ -23,7 +23,7 @@
     flex-direction: row;
     align-items: center;
 
-    width: 100%;
+    width: calc(100% - 16px);
     font-size: 1.25em;
     padding: 0.5em 8px;
     border-radius: 8px;
@@ -32,6 +32,35 @@
 
     &:hover {
       background-color: rgb(var(--col-bg-2) / 1);
+    }
+
+    &[aria-disabled="true"],
+    &[aria-disabled="true"]:hover {
+      background-color: rgb(var(--col-bg-0) / 1);
+      color: rgb(var(--col-fg-muted) / 0.5);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    &.highlight {
+      margin-top: 2em; /* trust me im a professional */
+      transition-property: background-color color;
+      background-color: rgb(var(--col-accent-muted) / 0.5);
+      border: 1px solid rgb(var(--col-accent-muted) / 0.25);
+      font-size: 1rem;
+      padding: 0.5em 0;
+      width: calc(100% - 2px);
+      justify-content: center;
+
+      &:hover {
+        color: black;
+        background-color: rgb(var(--col-accent) / 1);
+        border-color: rgb(var(--col-accent) / 0.5);
+      }
+
+      .lucide {
+        margin-left: -8px;
+      }
     }
 
     & > svg {
@@ -49,7 +78,6 @@
   border-radius: 8px;
   height: 3em;
 
-  background-color: rgb(var(--col-bg-1) / 1);
   padding: 0.25em 0.75em;
 
   transition-property: background-color;
@@ -66,5 +94,9 @@
     display: flex;
     flex-direction: column;
     padding-top: 1px;
+  }
+
+  .handle:hover {
+    text-decoration: none;
   }
 }

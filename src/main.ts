@@ -9,24 +9,30 @@ import "./navigation.ts";
 import { loginForm } from "./login-form.ts";
 import { session } from "./session.ts";
 
-import { banner } from "./banner.ts";
 import { parseRoute, route } from "./navigation.ts";
 import { fetchPreferences } from "./state/preferences.ts";
 import { ui } from "./ui/_ui.ts";
+import { isComposing } from "./ui/compose.ts";
+import { banner } from "./ui/header.ts";
 
 if (session !== undefined) {
-  let requestedRoute = parseRoute(location.pathname);
-
+  let requestedPath = location.pathname;
   const preOAuthRoute = localStorage.getItem("rainbow/pre-oauth-route");
   if (preOAuthRoute) {
     localStorage.removeItem("rainbow/pre-oauth-route");
-    requestedRoute = parseRoute(preOAuthRoute);
+    requestedPath = preOAuthRoute;
   }
 
   await fetchPreferences();
 
   ui();
-  route.set(requestedRoute);
+
+  if (requestedPath === "/compose") {
+    route.set({ id: "timeline" });
+    isComposing.set(true);
+  } else {
+    route.set(requestedPath.tap(parseRoute));
+  }
 } else {
   document.querySelector("header")!.append(banner());
   document.querySelector("main")!.append(loginForm());

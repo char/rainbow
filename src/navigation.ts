@@ -1,3 +1,4 @@
+import { isComposing } from "./ui/compose.ts";
 import { Subscribable } from "./util/subscribable.ts";
 
 type R<Id extends string> = { id: Id };
@@ -48,10 +49,29 @@ export function parseRoute(path: string): AppRoute {
   return { id: "not-found" };
 }
 
+export function getPathForRoute(route: AppRoute): string {
+  if (route.id === "timeline" && route.alg === undefined) return "/";
+  if (route.id === "notifications") return "/notifications";
+  if (route.id === "feed-list") return "/feeds";
+  if (route.id === "settings") return "/settings";
+
+  if (route.id === "thread") {
+    const [authority, _repo, rkey] = route.uri.substring("at://".length).split("/");
+    return `/profile/${authority}/post/${rkey}`;
+  }
+
+  if (route.id === "profile") {
+    return `/profile/${route.didOrHandle}`;
+  }
+
+  return "/404";
+}
+
 export function navigateTo(path: string) {
   const parsedRoute = parseRoute(path);
   routeEarly.set({ from: location.pathname, to: path, route: parsedRoute });
   history.pushState(null, "", path);
+  scrollTo(0, 0);
   route.set(parsedRoute);
 }
 
@@ -67,10 +87,19 @@ document.addEventListener("click", e => {
   if (location.origin !== url.origin) return; // open external links normally
 
   e.preventDefault();
-  navigateTo(url.pathname);
+
+  if (url.pathname === "/compose") {
+    isComposing.set(true);
+    history.pushState(null, "", url.pathname);
+  } else {
+    isComposing.set(false);
+    navigateTo(url.pathname);
+  }
 });
 
 addEventListener("popstate", () => {
+  isComposing.set(location.pathname === "/compose");
+
   const parsedRoute = parseRoute(location.pathname);
   routeEarly.set({
     from: routeEarly.get().to,

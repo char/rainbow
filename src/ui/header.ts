@@ -1,17 +1,37 @@
-import { banner } from "../banner.ts";
 import { session } from "../session.ts";
 import { selfProfile } from "../state/profile.ts";
 import { elem } from "../util/elem.ts";
-import { Bell, Hash, House, icon, UserCircle } from "../util/icons.ts";
+import { Bell, Hash, House, icon, Pen, Settings, UserCircle } from "../util/icons.ts";
 import { select } from "../util/select.ts";
 import { app } from "./_ui.ts";
+
+export function banner(): HTMLElement {
+  return elem("section", { id: "app-info" }, [
+    elem("h1", {}, ["Rainbow", elem("span", { ariaHidden: "true" }, [" 🌈"])]),
+    elem("small", {}, ["Vanilla client for Bluesky."]),
+    elem("div", {}, [
+      elem("small", {}, [
+        elem(
+          "a",
+          { className: "link", target: "_blank", href: "https://github.com/char/rainbow" },
+          ["Source code"],
+        ),
+      ]),
+    ]),
+  ]);
+}
 
 export function nav(): HTMLElement {
   return elem("nav", {}, [
     elem("a", { href: "/" }, [icon(House), "Home"]),
-    elem("a", { href: "/notifications" }, [icon(Bell), "Notifications"]),
-    elem("a", { href: "/feeds" }, [icon(Hash), "Feeds"]),
+    elem("a", { href: "/notifications", ariaDisabled: "true" }, [icon(Bell), "Notifications"]),
+    elem("a", { href: "/feeds", ariaDisabled: "true" }, [icon(Hash), "Feeds"]),
+
     elem("a", { href: "/profile/" + session?.did }, [icon(UserCircle), "Profile"]),
+
+    elem("a", { href: "/preferences", ariaDisabled: "true" }, [icon(Settings), "Preferences"]),
+
+    elem("a", { className: "highlight", href: "/compose" }, [icon(Pen), "Compose"]),
   ]);
 }
 
