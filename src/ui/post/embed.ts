@@ -34,7 +34,7 @@ export function embedCard(external: AppBskyEmbedExternal.View["external"]): HTML
   return elem("div", { className: "external" }, [
     elem("a", { className: "contents", target: "_blank", href: external.uri }, [
       elem("section", {}, [
-        external.thumb ? elem("img", { src: external.thumb }, []) : "",
+        external.thumb ? elem("img", { src: external.thumb, loading: "lazy" }, []) : "",
         elem("div", {}, [
           elem("h3", {}, [external.title ? external.title : new URL(external.uri).hostname]),
           elem("p", {}, [
