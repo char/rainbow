@@ -143,7 +143,7 @@ export class Post {
     this.ownRepost.set(newView.viewer?.repost);
     this.likeCount.set(newView.likeCount ?? 0);
     this.repostCount.set(newView.repostCount ?? 0);
-    this.replyCount.set(newView.repostCount ?? 0);
+    this.replyCount.set(newView.replyCount ?? 0);
   }
 
   #setupControls(): HTMLElement {
