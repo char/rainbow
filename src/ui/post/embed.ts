@@ -62,6 +62,7 @@ export function embedQuote(record: AppBskyEmbedRecord.ViewRecord): HTMLElement {
           ...(author.displayName ? [elem("strong", {}, [author.displayName]), " "] : []),
           elem("a", { className: "handle" }, [`@${author.handle}`]),
         ]),
+        elem("div", [], ["\u00B7"]),
         elem("div", {}, [age(new Date(quoteRecord.createdAt))]),
       ]),
       richText(quoteRecord.text, quoteRecord.facets),

@@ -71,13 +71,14 @@
     justify-content: start;
     gap: 1ch;
     margin-bottom: 0.5em;
+    color: rgb(var(--col-fg-muted) / 1);
+
+    strong {
+      color: rgb(var(--col-fg) / 1);
+    }
 
     .avatar {
       height: 1em;
-    }
-
-    time {
-      color: rgb(var(--col-fg-muted) / 1);
     }
   }
 }
