@@ -4,7 +4,7 @@ import { session } from "../session.ts";
 import { elem, noneElem } from "../util/elem.ts";
 import { select } from "../util/select.ts";
 import { app } from "./_ui.ts";
-import { richText } from "./rich-text.ts";
+import { linkifyText, parseRichText, richText } from "./rich-text.ts";
 import { Timeline } from "./timeline.ts";
 
 export function profileDetails(
@@ -39,7 +39,14 @@ export function profileDetails(
       elem("span", {}, [elem("data", {}, [`${profile.postsCount}`]), ` posts`]),
     ]),
 
-    profile.description ? richText(profile.description) : "",
+    profile.description
+      ? richText(profile.description, linkifyText(profile.description)).also(async it => {
+          const description = profile.description!;
+          const linkified = linkifyText(description);
+          const parsed = await parseRichText(description, false);
+          it.replaceWith(richText(description, [...parsed, ...linkified]));
+        })
+      : "",
   ]);
 
   return article;

@@ -1,14 +1,13 @@
-import type { AppBskyRichtextFacet } from "@atcute/client/lexicons";
 import { session } from "../session.ts";
 import { selfProfile } from "../state/profile.ts";
-import { createRecord, resolveHandle } from "../util/atp.ts";
+import { createRecord } from "../util/atp.ts";
 import { elem } from "../util/elem.ts";
 import { select } from "../util/select.ts";
 import { setClass } from "../util/set-class.ts";
 import { Subscribable } from "../util/subscribable.ts";
 
-import { tokenize } from "npm:@atcute/bluesky-richtext-parser@1";
 import { getPathForRoute, navigateTo } from "../navigation.ts";
+import { parseRichText } from "./rich-text.ts";
 
 export const isComposing = new Subscribable(false);
 
@@ -28,37 +27,7 @@ export function compose() {
     e.preventDefault();
 
     const text = select(composeBox, "#post-text", "textarea").value;
-    const tokens = tokenize(text);
-
-    const facets: AppBskyRichtextFacet.Main[] = [];
-    let i = 0;
-    const encoder = new TextEncoder();
-    for (const token of tokens) {
-      const index = {
-        byteStart: i,
-        byteEnd: (i += encoder.encode(token.raw).byteLength),
-      };
-
-      if (index.byteStart === index.byteEnd) {
-        continue;
-      }
-
-      if (token.type === "link" || token.type === "autolink") {
-        facets.push({
-          index,
-          features: [{ $type: "app.bsky.richtext.facet#link", uri: token.url }],
-        });
-      } else if (token.type === "mention") {
-        if (token.handle === "handle.invalid") continue;
-        const did = await resolveHandle(token.handle);
-        facets.push({ index, features: [{ $type: "app.bsky.richtext.facet#mention", did }] });
-      } else if (token.type === "topic") {
-        facets.push({
-          index,
-          features: [{ $type: "app.bsky.richtext.facet#tag", tag: token.name }],
-        });
-      }
-    }
+    const facets = await parseRichText(text);
 
     const record = await createRecord({
       repo: session!.did,

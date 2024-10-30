@@ -11,11 +11,6 @@ html {
   color: rgb(var(--col-fg) / 1);
 }
 
-img {
-  pointer-events: none;
-  user-select: none;
-}
-
 img.avatar {
   height: 42px;
   aspect-ratio: 1;
