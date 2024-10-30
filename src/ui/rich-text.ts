@@ -3,6 +3,7 @@ import { tokenize } from "npm:@atcute/bluesky-richtext-parser@1";
 import { segmentize } from "npm:@atcute/bluesky-richtext-segmenter@1";
 import { resolveHandle } from "../util/atp.ts";
 import { elem } from "../util/elem.ts";
+import { hasValidTLD } from "../util/tlds.ts";
 
 export type Facet = AppBskyRichtextFacet.Main;
 
@@ -21,6 +22,7 @@ export function linkifyText(text: string): Facet[] {
     let uri = matchURI;
     if (!uri.startsWith("http")) {
       const domain = match.groups?.domain;
+      if (!domain || !hasValidTLD(domain)) continue;
       uri = `https://${uri}`;
     }
 
@@ -98,7 +100,7 @@ export function richText(text: string, facets?: Facet[]): HTMLElement {
         if (feature.$type === "app.bsky.richtext.facet#link") {
           const uri = feature.uri;
           // TODO: map bsky.app links to local app -- but for now we assume everything is external
-          node = elem("a", { href: uri }, [node]);
+          node = elem("a", { href: uri, target: "_blank" }, [node]);
         }
         if (feature.$type === "app.bsky.richtext.facet#mention") {
           node = elem("a", { href: `/profile/${feature.did}` }, [node]);

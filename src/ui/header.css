@@ -45,8 +45,8 @@
     &.highlight {
       margin-top: 2em; /* trust me im a professional */
       transition-property: background-color color;
-      background-color: rgb(var(--col-accent-muted) / 0.5);
-      border: 1px solid rgb(var(--col-accent-muted) / 0.25);
+      background-color: rgb(var(--col-bg-1) / 1);
+      border: 1px solid rgb(var(--col-bg-3) / 0.5);
       font-size: 1rem;
       padding: 0.5em 0;
       width: calc(100% - 2px);
@@ -55,7 +55,7 @@
       &:hover {
         color: black;
         background-color: rgb(var(--col-accent) / 1);
-        border-color: rgb(var(--col-accent) / 0.5);
+        border-color: rgb(var(--col-fg) / 0.5);
       }
 
       .lucide {
