@@ -52,5 +52,9 @@ body:has(#compose-modal.visible) {
 
   button {
     border-radius: 4px;
+    color: rgb(var(--col-fg) / 1);
+    &:hover {
+      color: rgb(var(--col-accent) / 1);
+    }
   }
 }
