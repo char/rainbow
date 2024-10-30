@@ -85,8 +85,9 @@
   }
 
   & .post-body {
-    margin-top: 0.25em;
-    margin-bottom: 0.25em;
+    overflow: clip;
+    padding-top: 0.25em;
+    padding-bottom: 0.25em;
   }
 }
 
