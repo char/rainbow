@@ -144,6 +144,16 @@
   button {
     --color: 255 255 255;
 
+    all: unset;
+    appearance: none;
+
+    display: block;
+    user-select: none;
+
+    transition-timing-function: cubic-bezier(0.39, 0.575, 0.565, 1);
+    transition-duration: 150ms;
+    transition-property: color background-color;
+
     display: flex;
     align-items: center;
     padding: 0.5em;

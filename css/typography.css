@@ -1,15 +1,20 @@
-html {
+:root {
   --inter: Inter;
+}
 
-  font-size: 16px;
-  line-height: 1.25;
+html,
+input,
+button {
   font-family: var(--inter), "Noto Color Emoji", sans-serif;
   font-feature-settings:
     "liga" 1,
     "calt" 0;
+
+  font-size: 16px;
+  line-height: 1.25;
 }
 @supports (font-variation-settings: normal) {
-  html {
+  :root {
     --inter: InterVariable;
   }
 }

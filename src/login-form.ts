@@ -5,21 +5,35 @@ import {
 import { elem } from "./util/elem.ts";
 import { select } from "./util/select.ts";
 
-export const loginForm = elem("form", { id: "login-form" }, [
-  elem("input", { name: "handle", placeholder: "handle.bsky.example" }),
-  elem("button", { type: "submit" }, ["Log in"]),
-]);
-export const handleField = select(loginForm, "input[name=handle]", "input");
+export function loginForm(): HTMLElement {
+  const status = elem("p");
 
-loginForm.addEventListener("submit", async e => {
-  e.preventDefault();
+  const loginForm = elem("form", { id: "login-form" }, [
+    elem("label", { htmlFor: "handle-field" }, ["Handle / DID"]),
+    elem("input", {
+      type: "text",
+      name: "handle",
+      id: "handle-field",
+      placeholder: "handle.bsky.example",
+      required: true,
+    }),
+    elem("button", { type: "submit" }, ["Sign in with OAuth"]),
+    status,
+  ]);
+  const handleField = select(loginForm, "input[name=handle]", "input");
 
-  const handle = handleField.value;
+  loginForm.addEventListener("submit", async e => {
+    e.preventDefault();
 
-  const authOpts = await resolveFromIdentity(handle);
-  const authUrl = await createAuthorizationUrl({
-    scope: import.meta.env.OAUTH_SCOPE,
-    ...authOpts,
+    const handle = handleField.value;
+
+    const authOpts = await resolveFromIdentity(handle);
+    const authUrl = await createAuthorizationUrl({
+      scope: import.meta.env.OAUTH_SCOPE,
+      ...authOpts,
+    });
+    location.assign(authUrl);
   });
-  location.assign(authUrl);
-});
+
+  return loginForm;
+}

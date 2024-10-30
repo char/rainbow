@@ -1,22 +1,14 @@
 @import url(./reset.css);
-
 @import url(./palette.css);
 @import url(./typography.css);
 @import url(./layout.css);
+@import url(./form.css);
 
 @import url(../src/ui/_ui.css);
 
 html {
   background-color: rgb(var(--col-bg-0) / 1);
   color: rgb(var(--col-fg) / 1);
-}
-
-button {
-  all: unset;
-  appearance: none;
-
-  display: block;
-  user-select: none;
 }
 
 img {

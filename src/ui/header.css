@@ -28,7 +28,7 @@
     padding: 0.5em 8px;
     border-radius: 8px;
 
-    transition: background-color 250ms;
+    transition-property: background-color;
 
     &:hover {
       background-color: rgb(var(--col-bg-2) / 1);
@@ -52,7 +52,7 @@
   background-color: rgb(var(--col-bg-1) / 1);
   padding: 0.25em 0.75em;
 
-  transition: background-color 250ms;
+  transition-property: background-color;
 
   .avatar {
     height: 32px;
