@@ -15,10 +15,18 @@ import { fetchPreferences } from "./state/preferences.ts";
 import { ui } from "./ui/_ui.ts";
 
 if (session !== undefined) {
+  let requestedRoute = parseRoute(location.pathname);
+
+  const preOAuthRoute = localStorage.getItem("rainbow/pre-oauth-route");
+  if (preOAuthRoute) {
+    localStorage.removeItem("rainbow/pre-oauth-route");
+    requestedRoute = parseRoute(preOAuthRoute);
+  }
+
   await fetchPreferences();
 
   ui();
-  route.set(parseRoute(location.pathname));
+  route.set(requestedRoute);
 } else {
   document.querySelector("header")!.append(banner());
   document.querySelector("main")!.append(loginForm());

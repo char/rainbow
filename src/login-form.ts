@@ -32,6 +32,7 @@ export function loginForm(): HTMLElement {
       scope: import.meta.env.OAUTH_SCOPE,
       ...authOpts,
     });
+    localStorage.setItem("rainbow/pre-oauth-route", location.pathname + location.search);
     location.assign(authUrl);
   });
 
