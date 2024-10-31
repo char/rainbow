@@ -40,6 +40,11 @@
       height: 1em;
       margin-right: 0.5ch;
     }
+
+    .lucide-pin {
+      margin-left: -0.75ch;
+      margin-right: 0.25ch;
+    }
   }
 
   .topline {

@@ -5,7 +5,7 @@ import { session } from "../../session.ts";
 import { moderationRules } from "../../state/labelers.ts";
 import { createRecord, deleteRecord } from "../../util/atp.ts";
 import { elem, elemRewrite } from "../../util/elem.ts";
-import { Ellipsis, Heart, icon, MessageCircle, Repeat2, Reply } from "../../util/icons.ts";
+import { Ellipsis, Heart, icon, MessageCircle, Pin, Repeat2, Reply } from "../../util/icons.ts";
 import { Subscribable } from "../../util/subscribable.ts";
 import { Composer } from "../compose.ts";
 import { richText } from "../rich-text.ts";
@@ -167,6 +167,10 @@ export class Post {
           ]),
         ]),
       ]);
+    }
+
+    if (reason.$type === "app.bsky.feed.defs#reasonPin") {
+      elemRewrite(this.reason, [icon(Pin), elem("div", {}, ["Pinned post"])]);
     }
   }
 

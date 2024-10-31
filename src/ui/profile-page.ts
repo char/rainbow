@@ -91,7 +91,7 @@ export function profilePage() {
 
     const loadTimeline = async () => {
       const { data: feedView } = await session!.xrpc.get("app.bsky.feed.getAuthorFeed", {
-        params: { actor, filter: "posts_and_author_threads", limit: 30 },
+        params: { actor, filter: "posts_and_author_threads", limit: 30, includePins: true },
       });
 
       currentTimeline?.hide();
