@@ -39,6 +39,7 @@
     .lucide {
       height: 1em;
       margin-right: 0.5ch;
+      margin-left: -0.5ch;
     }
 
     .lucide-pin {
