@@ -30,7 +30,7 @@
 }
 
 .compose-box {
-  max-width: calc(900px - 4em);
+  max-width: calc(min(900px, 100vw) - 4em);
   margin: 0 auto;
   margin-top: 6em;
   padding: 1em;
