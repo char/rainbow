@@ -1,0 +1,12 @@
+{
+  "application_type": "web",
+  "client_id": "https://rainbow.umm.gay/client-metadata.json",
+  "client_name": "Rainbow",
+  "client_uri": "https://rainbow.umm.gay",
+  "dpop_bound_access_tokens": true,
+  "grant_types": ["authorization_code", "refresh_token"],
+  "redirect_uris": ["https://rainbow.umm.gay/"],
+  "response_types": ["code"],
+  "scope": "atproto transition:generic",
+  "token_endpoint_auth_method": "none"
+}

@@ -3,7 +3,7 @@ import * as dotenv from "jsr:@std/dotenv@0.225.2";
 import * as path from "jsr:@std/path@1";
 import * as esbuild from "npm:esbuild@0.24";
 
-export const envPlugin = (files: string[] = [".env", ".env.local"]): esbuild.Plugin => ({
+export const envPlugin = (files: string[]): esbuild.Plugin => ({
   name: "env",
   setup: build => {
     build.onResolve({ filter: /^build-system-env$/ }, args => {
@@ -54,7 +54,11 @@ export const cssPlugin = (): esbuild.Plugin => ({
   },
 });
 
-export const build = async (watch: boolean = false, serve?: { host: string; port: number }) => {
+export const build = async (
+  watch: boolean = false,
+  serve?: { host: string; port: number },
+  prod?: boolean,
+) => {
   const opts = {
     bundle: true,
     minify: true,
@@ -63,7 +67,11 @@ export const build = async (watch: boolean = false, serve?: { host: string; port
     format: "esm",
     keepNames: true,
     sourcemap: "linked",
-    plugins: [envPlugin(), cssPlugin(), ...denoPlugins()],
+    plugins: [
+      envPlugin(prod ? [".env", ".env.production"] : [".env", ".env.local"]),
+      cssPlugin(),
+      ...denoPlugins(),
+    ],
     entryPoints: ["./src/main.ts"],
     outdir: "./web/dist",
     legalComments: "none",
@@ -96,5 +104,6 @@ if (import.meta.main) {
   }
 
   const watch = Deno.args.includes("--watch");
-  await build(watch, { host: "127.0.0.1", port: 3004 });
+  const prod = Deno.args.includes("--prod");
+  await build(watch, { host: "127.0.0.1", port: 3004 }, prod);
 }
