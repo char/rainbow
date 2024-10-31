@@ -45,10 +45,14 @@ export class Composer {
     // TODO: use a <dialog> element
     this.modal = elem("section", { className: "compose-modal" }, [this.box]);
 
+    // TODO: ctrl+enter should send, escape should close
+
     this.box.addEventListener("submit", async e => {
       e.preventDefault();
 
       const text = select(this.box, "#post-text", "textarea").value;
+      // if (!text.trim()) return;
+
       const facets = await parseRichText(text);
 
       const record = await createRecord({
@@ -88,6 +92,7 @@ export class Composer {
   show() {
     document.body.append(this.modal);
     this.modal.classList.add("visible");
+    select(this.box, "textarea").focus();
   }
 
   hide() {
