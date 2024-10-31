@@ -14,7 +14,6 @@ oauth.configureOAuth({
 export interface Session {
   session: oauth.Session;
   did: string;
-  handle: string | undefined;
 
   xrpc: atcute.XRPC;
 }
@@ -50,7 +49,6 @@ export const loadSession = async (
   oauthSession: oauth.Session,
 ): Promise<Session | undefined> => {
   const did = oauthSession.info.sub;
-  const handle = await resolveDIDWithCache(did);
 
   const agent = new oauth.OAuthUserAgent(oauthSession);
   const handler = async (path: string, init: RequestInit) => {
@@ -66,7 +64,7 @@ export const loadSession = async (
 
   const xrpc = new atcute.XRPC({ handler });
 
-  return { did, handle, session: oauthSession, xrpc };
+  return { did, session: oauthSession, xrpc };
 };
 
 export let session: Session | undefined;
@@ -82,33 +80,3 @@ export function updateStoredSession() {
   else localStorage.removeItem("rainbow/last-used-session");
 }
 updateStoredSession();
-
-export async function resolveDID(did: string): Promise<string | undefined> {
-  const res = await fetch(
-    did.startsWith("did:web:")
-      ? `https://${did.split(":")[2]}/.well-known/did.json`
-      : "https://plc.directory/" + did,
-  );
-
-  return res.json().then(doc => {
-    if (!("alsoKnownAs" in doc)) return undefined;
-    for (const alias of doc.alsoKnownAs) {
-      if (typeof alias !== "string") return;
-      if (alias.startsWith("at://")) {
-        return alias.substring("at://".length);
-      }
-    }
-  });
-}
-
-async function resolveDIDWithCache(did: string): Promise<string | undefined> {
-  const cacheKey = "rainbow/did-cache/" + did;
-
-  const cachedHandle = localStorage.getItem(cacheKey);
-  if (cachedHandle) return cachedHandle;
-
-  const handle = await resolveDID(did);
-  if (handle) localStorage.setItem(cacheKey, handle);
-
-  return handle;
-}

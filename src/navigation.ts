@@ -1,4 +1,3 @@
-import { isComposing } from "./ui/compose.ts";
 import { Subscribable } from "./util/subscribable.ts";
 
 type R<Id extends string> = { id: Id };
@@ -10,10 +9,16 @@ export type AppRoute =
   | R<"feed-list">
   | R<"settings">
   | { id: "profile"; didOrHandle: string }
-  | R<"not-found">;
+  | R<"not-found">
+  | { id: "compose" };
 
 export const route = new Subscribable<AppRoute>({ id: "loading" });
-export const routeEarly = new Subscribable<{ from?: string; to?: string; route: AppRoute }>({
+export const routeEarly = new Subscribable<{
+  from?: string;
+  to?: string;
+  route: AppRoute;
+  cancel?: boolean;
+}>({
   from: undefined,
   to: undefined,
   route: route.get(),
@@ -33,6 +38,7 @@ export function parseRoute(path: string): AppRoute {
   if (path === "/notifications") return { id: "notifications" };
   if (path === "/feeds") return { id: "feed-list" };
   if (path === "/settings") return { id: "settings" };
+  if (path === "/compose") return { id: "compose" };
 
   const threadMatch = matchPattern(THREAD_PATTERN, path);
   if (threadMatch) {
@@ -54,6 +60,7 @@ export function getPathForRoute(route: AppRoute): string {
   if (route.id === "notifications") return "/notifications";
   if (route.id === "feed-list") return "/feeds";
   if (route.id === "settings") return "/settings";
+  if (route.id === "compose") return "/compose";
 
   if (route.id === "thread") {
     const [authority, _repo, rkey] = route.uri.substring("at://".length).split("/");
@@ -67,12 +74,15 @@ export function getPathForRoute(route: AppRoute): string {
   return "/404";
 }
 
-export function navigateTo(path: string) {
-  const parsedRoute = parseRoute(path);
+export function navigateTo(pathOrRoute: string | AppRoute) {
+  const path = typeof pathOrRoute === "string" ? pathOrRoute : getPathForRoute(pathOrRoute);
+  const parsedRoute = typeof pathOrRoute === "string" ? parseRoute(pathOrRoute) : pathOrRoute;
   routeEarly.set({ from: location.pathname, to: path, route: parsedRoute });
   history.pushState(null, "", path);
-  scrollTo(0, 0);
-  route.set(parsedRoute);
+  if (!routeEarly.get().cancel) {
+    scrollTo(0, 0);
+    route.set(parsedRoute);
+  }
 }
 
 document.addEventListener("click", e => {
@@ -88,23 +98,17 @@ document.addEventListener("click", e => {
 
   e.preventDefault();
 
-  if (url.pathname === "/compose") {
-    isComposing.set(true);
-    history.pushState(null, "", url.pathname);
-  } else {
-    isComposing.set(false);
-    navigateTo(url.pathname);
-  }
+  navigateTo(url.pathname);
 });
 
 addEventListener("popstate", () => {
-  isComposing.set(location.pathname === "/compose");
-
   const parsedRoute = parseRoute(location.pathname);
   routeEarly.set({
     from: routeEarly.get().to,
     to: location.pathname,
     route: parsedRoute,
   });
-  route.set(parsedRoute);
+  if (!routeEarly.get().cancel) {
+    route.set(parsedRoute);
+  }
 });

@@ -1,4 +1,4 @@
-#compose-modal {
+.compose-modal {
   display: block;
 
   position: fixed;
@@ -29,11 +29,7 @@
   }
 }
 
-body:has(#compose-modal.visible) {
-  overflow: hidden;
-}
-
-#compose-box {
+.compose-box {
   max-width: calc(900px - 4em);
   margin: 0 auto;
   margin-top: 6em;
@@ -57,4 +53,8 @@ body:has(#compose-modal.visible) {
       color: rgb(var(--col-accent) / 1);
     }
   }
+}
+
+body:has(#app[inert]) {
+  overflow-y: hidden;
 }

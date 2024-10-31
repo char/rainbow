@@ -7,6 +7,7 @@ import { createRecord, deleteRecord } from "../../util/atp.ts";
 import { elem } from "../../util/elem.ts";
 import { Ellipsis, Heart, icon, MessageCircle, Repeat2, Reply } from "../../util/icons.ts";
 import { Subscribable } from "../../util/subscribable.ts";
+import { Composer } from "../compose.ts";
 import { richText } from "../rich-text.ts";
 import { age } from "./age.ts";
 import { embedMedia } from "./embed.ts";
@@ -57,6 +58,8 @@ export class Post {
   likeCount = new Subscribable(0);
   repostCount = new Subscribable(0);
   replyCount = new Subscribable(0);
+
+  replyComposer: Composer | undefined;
 
   moderation: ModerationResult[];
 
@@ -153,7 +156,16 @@ export class Post {
         elem("data").also(data =>
           this.replyCount.subscribeImmediate(count => (data.textContent = `${count}`)),
         ),
-      ]),
+      ]).also(button => {
+        button.addEventListener("click", async e => {
+          e.preventDefault();
+          e.stopPropagation();
+
+          // TODO: pass in reply param to constructor
+          this.replyComposer ??= new Composer(this);
+          Composer.current.set(this.replyComposer);
+        });
+      }),
       elem("button", { className: "repost" }, [
         icon(Repeat2),
         elem("data").also(data =>
@@ -251,6 +263,8 @@ export class Post {
       const isNotLink = this.article.dataset.noLink !== undefined;
       if (isNotLink) return;
 
+      if (this.article.classList.contains("active")) return;
+
       if (e.target instanceof HTMLElement && e.target.closest("a") !== null) return;
       if (e.ctrlKey || e.button !== 0) return;
 
@@ -259,6 +273,7 @@ export class Post {
 
       e.preventDefault();
       e.stopPropagation();
+
       navigateTo(normalizePostURIInternal(this.view));
     });
   }

@@ -13,7 +13,7 @@
   padding: 1em;
   padding-bottom: 0.5em;
 
-  &:not([data-no-link]) {
+  &:not([data-no-link], .active) {
     cursor: pointer;
   }
 
@@ -150,6 +150,8 @@
 
     display: block;
     user-select: none;
+
+    cursor: pointer;
 
     transition-timing-function: cubic-bezier(0.39, 0.575, 0.565, 1);
     transition-duration: 150ms;
