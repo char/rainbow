@@ -26,11 +26,19 @@
   }
   & > .reason {
     grid-area: reason;
-    margin-bottom: 1em;
+    margin-bottom: 0.5em;
+    color: rgb(var(--col-fg-muted) / 1);
 
     display: none;
     &:has(*) {
-      display: block;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .lucide {
+      height: 1em;
+      margin-right: 0.5ch;
     }
   }
 
@@ -196,4 +204,8 @@
   .reply {
     --color: var(--col-accent);
   }
+}
+
+.thread .post .reason {
+  display: none;
 }

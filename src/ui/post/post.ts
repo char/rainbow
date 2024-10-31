@@ -4,7 +4,7 @@ import { navigateTo } from "../../navigation.ts";
 import { session } from "../../session.ts";
 import { moderationRules } from "../../state/labelers.ts";
 import { createRecord, deleteRecord } from "../../util/atp.ts";
-import { elem } from "../../util/elem.ts";
+import { elem, elemRewrite } from "../../util/elem.ts";
 import { Ellipsis, Heart, icon, MessageCircle, Repeat2, Reply } from "../../util/icons.ts";
 import { Subscribable } from "../../util/subscribable.ts";
 import { Composer } from "../compose.ts";
@@ -63,6 +63,7 @@ export class Post {
 
   moderation: ModerationResult[];
 
+  reason: HTMLElement;
   article: HTMLElement;
 
   hierarchy: PostHierarchy = {
@@ -96,8 +97,9 @@ export class Post {
 
     this.moderation = [...moderatePost(moderationRules, post)];
 
+    this.reason = elem("div", { className: "reason" }, []);
     this.article = elem("article", { className: "post" }, [
-      elem("div", { className: "reason" }, []),
+      this.reason,
       elem("aside", {}, [
         elem(
           "a",
@@ -147,6 +149,25 @@ export class Post {
     this.likeCount.set(newView.likeCount ?? 0);
     this.repostCount.set(newView.repostCount ?? 0);
     this.replyCount.set(newView.replyCount ?? 0);
+  }
+
+  setReason(reason?: AppBskyFeedDefs.FeedViewPost["reason"]) {
+    if (!reason) {
+      this.reason.innerHTML = "";
+      return;
+    }
+
+    if (reason.$type === "app.bsky.feed.defs#reasonRepost") {
+      elemRewrite(this.reason, [
+        icon(Repeat2),
+        elem("div", {}, [
+          "Reposted by ",
+          elem("a", { className: "handle", href: `/profile/${reason.by.handle}` }, [
+            reason.by.displayName ?? `@${reason.by.handle}`,
+          ]),
+        ]),
+      ]);
+    }
   }
 
   #setupControls(): HTMLElement {

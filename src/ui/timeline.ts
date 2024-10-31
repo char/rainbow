@@ -61,6 +61,7 @@ export class Timeline {
   append(feed: AppBskyFeedDefs.FeedViewPost[]) {
     for (const feedPost of feed) {
       const post = Post.get(feedPost.post, feedPost.reply?.parent?.tap(feedReply));
+      post.setReason(feedPost.reason);
       this.posts.push(post);
       this.container.append(post.article);
     }
