@@ -45,35 +45,22 @@ export class Composer {
     // TODO: use a <dialog> element
     this.modal = elem("section", { className: "compose-modal" }, [this.box]);
 
-    // TODO: ctrl+enter should send, escape should close
+    select(this.box, "#post-text", "textarea").addEventListener("keydown", e => {
+      if (Composer.current.get() !== this) return;
 
-    this.box.addEventListener("submit", async e => {
+      if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+        this.send();
+      }
+    });
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape") {
+        this.dispelIfCurrent();
+      }
+    });
+
+    this.box.addEventListener("submit", e => {
       e.preventDefault();
-
-      const text = select(this.box, "#post-text", "textarea").value;
-      // if (!text.trim()) return;
-
-      const facets = await parseRichText(text);
-
-      const record = await createRecord({
-        repo: session!.did,
-        collection: "app.bsky.feed.post",
-        record: {
-          $type: "app.bsky.feed.post",
-          text,
-          createdAt: new Date().toISOString(),
-          facets,
-          langs: this.langs,
-          embed: this.embed,
-          reply: this.reply,
-        },
-      });
-
-      this.dispelIfCurrent();
-
-      // TODO: optimistically store a Post in store so that if AppView hasn't
-      // seen our post yet we can still render something instead of a blank page
-      navigateTo({ id: "thread", uri: record.uri });
+      this.send();
     });
 
     this.modal.addEventListener("click", e => {
@@ -81,6 +68,33 @@ export class Composer {
       if (e.target !== this.modal) return;
       Composer.current.set(undefined);
     });
+  }
+
+  async send() {
+    const text = select(this.box, "#post-text", "textarea").value;
+    // if (!text.trim()) return;
+
+    const facets = await parseRichText(text);
+
+    const record = await createRecord({
+      repo: session!.did,
+      collection: "app.bsky.feed.post",
+      record: {
+        $type: "app.bsky.feed.post",
+        text,
+        createdAt: new Date().toISOString(),
+        facets,
+        langs: this.langs,
+        embed: this.embed,
+        reply: this.reply,
+      },
+    });
+
+    this.dispelIfCurrent();
+
+    // TODO: optimistically store a Post in store so that if AppView hasn't
+    // seen our post yet we can still render something instead of a blank page
+    navigateTo({ id: "thread", uri: record.uri });
   }
 
   dispelIfCurrent() {
