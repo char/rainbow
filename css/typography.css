@@ -10,8 +10,8 @@ button {
     "liga" 1,
     "calt" 0;
 
-  font-size: 16px;
-  line-height: 1.25;
+  font-size: 15px;
+  line-height: 20px;
 }
 @supports (font-variation-settings: normal) {
   :root {
