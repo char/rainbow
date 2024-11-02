@@ -44,7 +44,10 @@ export function profileDetails(
           const description = profile.description!;
           const linkified = linkifyText(description);
           const parsed = await parseRichText(description, false);
-          it.replaceWith(richText(description, [...parsed, ...linkified]));
+          const facets = [...parsed, ...linkified].toSorted(
+            (a, b) => a.index.byteStart - b.index.byteStart,
+          );
+          it.replaceWith(richText(description, facets));
         })
       : "",
   ]);
