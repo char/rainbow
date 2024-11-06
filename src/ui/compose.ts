@@ -7,7 +7,7 @@ import { elem } from "../util/elem.ts";
 import { select } from "../util/select.ts";
 import { sleep } from "../util/sleep.ts";
 import { Subscribable } from "../util/subscribable.ts";
-import { Post } from "./post/post.ts";
+import { createPostArticle, Post } from "./post/post.ts";
 import { parseRichText } from "./rich-text.ts";
 
 export class Composer {
@@ -21,6 +21,7 @@ export class Composer {
   reply: AppBskyFeedPost.ReplyRef | undefined; // TODO
 
   constructor(replyingTo?: Post) {
+    let replyPostElem: HTMLElement | undefined;
     if (replyingTo) {
       const record = replyingTo.view.record as AppBskyFeedPost.Record;
       const parent = { cid: replyingTo.view.cid, uri: replyingTo.view.uri };
@@ -28,6 +29,8 @@ export class Composer {
         ? { cid: record.reply.root.cid, uri: record.reply.root.uri }
         : parent;
       this.reply = { parent, root };
+      replyPostElem = createPostArticle(replyingTo);
+      replyPostElem.dataset.noLink = "";
     }
 
     this.box = elem("form", { className: "compose-box", lang: "en" }, [
@@ -37,6 +40,7 @@ export class Composer {
           selfProfile.subscribeImmediate(p => (it.textContent = p.handle ?? p.did)),
         ),
       ]),
+      replyPostElem ?? "",
       elem("label", { htmlFor: "post-text" }, ["Text"]),
       elem("textarea", { className: "post-text", id: "post-text", maxLength: 300 }, []),
       elem("button", { type: "submit" }, ["Post"]),

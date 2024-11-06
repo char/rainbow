@@ -6,6 +6,7 @@ import { moderationRules } from "../../state/labelers.ts";
 import { createRecord, deleteRecord } from "../../util/atp.ts";
 import { elem, elemRewrite } from "../../util/elem.ts";
 import { Ellipsis, Heart, icon, MessageCircle, Pin, Repeat2, Reply } from "../../util/icons.ts";
+import { select } from "../../util/select.ts";
 import { Subscribable } from "../../util/subscribable.ts";
 import { Composer } from "../compose.ts";
 import { richText } from "../rich-text.ts";
@@ -98,43 +99,8 @@ export class Post {
     this.moderation = [...moderatePost(moderationRules, post)];
 
     this.reason = elem("div", { className: "reason" }, []);
-    this.article = elem("article", { className: "post" }, [
-      this.reason,
-      elem("aside", {}, [
-        elem(
-          "a",
-          { className: "contents", href: `/profile/${this.author.handle ?? this.author.did}` },
-          [elem("img", { className: "avatar", src: this.author.avatar, loading: "lazy" })],
-        ),
-      ]),
-      elem("section", { className: "post-main" }, [
-        elem("div", { className: "topline" }, [
-          elem("section", { className: "author" }, [
-            ...(this.author.displayName
-              ? [elem("strong", {}, [this.author.displayName]), " "]
-              : []),
-            this.author.handle
-              ? elem("a", { className: "handle", href: `/profile/${this.author.handle}` }, [
-                  `@${this.author.handle}`,
-                ])
-              : elem("a", { className: "handle" }, ["[invalid handle]"]),
-          ]),
-          elem("section", { className: "details" }, [age(this.createdAt)]),
-        ]),
-        reply
-          ? elem("span", { className: "reply-details" }, [
-              icon(Reply),
-              "Replying to ",
-              createReplyAuthor(reply),
-            ])
-          : "",
-        elem("section", { className: "post-body" }, [
-          richText(record.text, record.facets),
-          ...(post.embed?.tap(embedMedia) ?? []),
-        ]),
-        this.#setupControls(),
-      ]),
-    ]);
+    this.article = createPostArticle(this);
+    select(this.article, ".post-main").append(this.#setupControls());
 
     this.article.dataset.uri = post.uri;
     this.article.dataset.author = post.author.did;
@@ -182,11 +148,10 @@ export class Post {
           this.replyCount.subscribeImmediate(count => (data.textContent = `${count}`)),
         ),
       ]).also(button => {
-        button.addEventListener("click", async e => {
+        button.addEventListener("click", e => {
           e.preventDefault();
           e.stopPropagation();
 
-          // TODO: pass in reply param to constructor
           this.replyComposer ??= new Composer(this);
           Composer.current.set(this.replyComposer);
         });
@@ -304,4 +269,43 @@ export class Post {
   }
 }
 
-Object.defineProperty(globalThis, "Post", { value: Post });
+export function createPostArticle(post: Post): HTMLElement {
+  const record = post.view.record as AppBskyFeedPost.Record;
+
+  return elem("article", { className: "post" }, [
+    post.reason,
+    elem("aside", {}, [
+      elem(
+        "a",
+        { className: "contents", href: `/profile/${post.author.handle ?? post.author.did}` },
+        [elem("img", { className: "avatar", src: post.author.avatar, loading: "lazy" })],
+      ),
+    ]),
+    elem("section", { className: "post-main" }, [
+      elem("div", { className: "topline" }, [
+        elem("section", { className: "author" }, [
+          ...(post.author.displayName
+            ? [elem("strong", {}, [post.author.displayName]), " "]
+            : []),
+          post.author.handle
+            ? elem("a", { className: "handle", href: `/profile/${post.author.handle}` }, [
+                `@${post.author.handle}`,
+              ])
+            : elem("a", { className: "handle" }, ["[invalid handle]"]),
+        ]),
+        elem("section", { className: "details" }, [age(post.createdAt)]),
+      ]),
+      post.reply
+        ? elem("span", { className: "reply-details" }, [
+            icon(Reply),
+            "Replying to ",
+            createReplyAuthor(post.reply),
+          ])
+        : "",
+      elem("section", { className: "post-body" }, [
+        richText(record.text, record.facets),
+        ...(post.view.embed?.tap(embedMedia) ?? []),
+      ]),
+    ]),
+  ]);
+}

@@ -1,4 +1,4 @@
-import type { AppBskyFeedDefs } from "@atcute/client/lexicons";
+import type { AppBskyFeedDefs, AppBskyFeedGetTimeline } from "@atcute/client/lexicons";
 import { route } from "../navigation.ts";
 import { session } from "../session.ts";
 import { elem } from "../util/elem.ts";
@@ -7,8 +7,12 @@ import { app } from "./_ui.ts";
 import { Post } from "./post/post.ts";
 import { feedReply } from "./post/reply.ts";
 
+type FeedViewPost = AppBskyFeedDefs.FeedViewPost;
+
 export class Timeline {
   posts: Post[] = [];
+  feedPosts = new Map<string, FeedViewPost>();
+
   container: HTMLElement = elem("section", { className: "timeline" });
   cursor: string | undefined;
 
@@ -28,7 +32,12 @@ export class Timeline {
     this.observer?.unobserve(this.timelineEnd);
     this.timelineEnd.remove();
 
-    for (const post of this.posts) post.article.className = "post";
+    for (const post of this.posts) {
+      post.article.className = "post";
+
+      const feedPost = this.feedPosts.get(post.uri);
+      post.setReason(feedPost?.reason);
+    }
     this.container.replaceChildren(...this.posts.map(p => p.article));
     elem.append(this.container);
 
@@ -61,9 +70,12 @@ export class Timeline {
   append(feed: AppBskyFeedDefs.FeedViewPost[]) {
     for (const feedPost of feed) {
       const post = Post.get(feedPost.post, feedPost.reply?.parent?.tap(feedReply));
-      post.setReason(feedPost.reason);
-      this.posts.push(post);
-      this.container.append(post.article);
+      const alreadyExisted = this.feedPosts.has(post.uri);
+      this.feedPosts.set(post.uri, feedPost);
+      if (!alreadyExisted) {
+        this.posts.push(post);
+        this.container.append(post.article);
+      }
     }
 
     this.container.append(this.timelineEnd);
@@ -73,7 +85,9 @@ export class Timeline {
     const posts = [];
     for (const feedPost of feed) {
       const post = Post.get(feedPost.post, feedPost.reply?.parent?.tap(feedReply));
-      posts.push(post);
+      const alreadyExisted = this.feedPosts.has(post.uri);
+      this.feedPosts.set(post.uri, feedPost);
+      if (!alreadyExisted) posts.push(post);
     }
 
     this.posts.unshift(...posts);
@@ -81,8 +95,32 @@ export class Timeline {
   }
 }
 
+async function fetchFeed(
+  algorithm: string | undefined,
+  cursor: string | undefined,
+): Promise<AppBskyFeedGetTimeline.Output> {
+  const { data } = await session!.xrpc.get("app.bsky.feed.getTimeline", {
+    params: { limit: 30, cursor, algorithm },
+  });
+  return data;
+}
+
+async function createFeedTimeline(algorithm: string | undefined) {
+  const timeline = new Timeline();
+  timeline.loadMore = async (cursor: string | undefined) => {
+    const { feed, cursor: newCursor } = await fetchFeed(algorithm, cursor);
+    timeline.cursor = newCursor;
+    timeline.append(feed);
+    return feed.length > 0;
+  };
+  await timeline.loadMore?.(undefined);
+
+  return timeline;
+}
+
 export function timeline() {
   let currentTimeline: Timeline | undefined;
+  const timelines = new Map<string | undefined, Timeline>();
 
   route.subscribe(async route => {
     if (route.id !== "timeline") {
@@ -92,22 +130,18 @@ export function timeline() {
 
     currentTimeline?.show(select(app, "main"));
 
-    const timeline = new Timeline();
-    timeline.loadMore = async (cursor_: string | undefined) => {
-      const {
-        data: { feed, cursor },
-      } = await session!.xrpc.get("app.bsky.feed.getTimeline", {
-        params: { limit: 30, cursor: cursor_ },
+    const timeline =
+      timelines.get(route.alg) ??
+      (await createFeedTimeline(route.alg)).also(it => timelines.set(route.alg, it));
+
+    if (currentTimeline === timeline) {
+      fetchFeed(route.alg, undefined).then(res => {
+        timeline.prepend(res.feed);
       });
-      timeline.cursor = cursor;
-      timeline.append(feed);
-
-      return feed.length > 0;
-    };
-    await timeline.loadMore?.(undefined);
-
-    currentTimeline?.hide();
-    currentTimeline = timeline;
-    timeline.show(select(app, "main"));
+    } else {
+      currentTimeline?.hide();
+      currentTimeline = timeline;
+      timeline.show(select(app, "main"));
+    }
   });
 }

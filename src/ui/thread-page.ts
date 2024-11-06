@@ -1,3 +1,4 @@
+import { XRPCError } from "@atcute/client";
 import type { AppBskyFeedGetPostThread } from "@atcute/client/lexicons";
 import { route } from "../navigation.ts";
 import { session } from "../session.ts";
@@ -137,19 +138,26 @@ export function threadPage() {
       scrollTo(0, earlyBoundingRect.y - pageBoundingRect.y - 0.5);
     }
 
-    const { data: threadView } = await session!.xrpc.get("app.bsky.feed.getPostThread", {
-      params: { uri: route.uri },
-    });
+    try {
+      const { data: threadView } = await session!.xrpc.get("app.bsky.feed.getPostThread", {
+        params: { uri: route.uri },
+      });
 
-    earlyBoundingRect = eagerPost?.article.getBoundingClientRect();
+      earlyBoundingRect = eagerPost?.article.getBoundingClientRect();
 
-    page.innerHTML = "";
-    renderThread(page, buildThread(threadView.thread));
+      page.innerHTML = "";
+      renderThread(page, buildThread(threadView.thread));
 
-    if (eagerPost) {
-      const postRect = eagerPost.article.getBoundingClientRect();
-      const delta = postRect.y + 1 - (earlyBoundingRect?.y ?? 0);
-      scrollTo(0, scrollY + delta - 0.5);
+      if (eagerPost) {
+        const postRect = eagerPost.article.getBoundingClientRect();
+        const delta = postRect.y + 1 - (earlyBoundingRect?.y ?? 0);
+        scrollTo(0, scrollY + delta - 0.5);
+      }
+    } catch (err) {
+      const error = err as XRPCError;
+      if (error.kind === "NotFound" && eagerPost) {
+        eagerPost.deleted = true;
+      }
     }
   });
 }
