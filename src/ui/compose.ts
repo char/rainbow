@@ -75,7 +75,8 @@ export class Composer {
   }
 
   async send() {
-    const text = select(this.box, "#post-text", "textarea").value;
+    const textBox = select(this.box, "#post-text", "textarea");
+    const text = textBox.value;
     // if (!text.trim()) return;
 
     const facets = await parseRichText(text);
@@ -93,6 +94,8 @@ export class Composer {
         reply: this.reply,
       },
     });
+
+    textBox.value = "";
 
     this.dispelIfCurrent();
 
