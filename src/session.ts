@@ -1,8 +1,8 @@
 import * as atcute from "@atcute/client";
-import { At } from "@atcute/client/lexicons";
 import { mergeHeaders } from "@atcute/client/utils/http";
 import * as oauth from "npm:@atcute/oauth-browser-client@1";
 import { BSKY_MODERATION, labelerServiceIDs } from "./state/labelers.ts";
+import { Subscribable } from "./util/subscribable.ts";
 
 oauth.configureOAuth({
   metadata: {
@@ -18,36 +18,7 @@ export interface Session {
   xrpc: atcute.XRPC;
 }
 
-const loadOAuthSession = async (): Promise<oauth.Session | undefined> => {
-  const params = new URLSearchParams(location.hash.substring(1));
-  if (params.has("state") && (params.has("code") || params.has("error"))) {
-    history.replaceState(null, "", location.pathname + location.search);
-    const session = await oauth.finalizeAuthorization(params);
-    return session;
-  }
-
-  const lastUsedSession = localStorage.getItem("rainbow/last-used-session");
-  if (lastUsedSession !== null) {
-    try {
-      return await oauth.getSession(lastUsedSession as At.DID);
-    } catch {
-      // ignore
-    }
-  }
-
-  try {
-    const did = oauth.listStoredSessions().at(0);
-    if (did !== undefined) return await oauth.getSession(did);
-  } catch {
-    // ignore
-  }
-
-  return undefined;
-};
-
-export const loadSession = async (
-  oauthSession: oauth.Session,
-): Promise<Session | undefined> => {
+const loadSession = (oauthSession: oauth.Session): Session => {
   const did = oauthSession.info.sub;
 
   const agent = new oauth.OAuthUserAgent(oauthSession);
@@ -67,16 +38,32 @@ export const loadSession = async (
   return { did, session: oauthSession, xrpc };
 };
 
-export let session: Session | undefined;
-export function setSession(session_: Session) {
-  session = session_;
+export const sessions: Session[] = [];
+export const currentSession = new Subscribable<Session | undefined>(undefined);
+export let session: Session | undefined; // sugared access
+currentSession.subscribe(it => (session = it));
+
+let primarySessionId =
+  localStorage.getItem("rainbow/last-used-session") ?? oauth.listStoredSessions().at(0);
+
+const params = new URLSearchParams(location.hash.substring(1));
+if (params.has("state") && (params.has("code") || params.has("error"))) {
+  history.replaceState(null, "", location.pathname + location.search);
+  const oauthSession = await oauth.finalizeAuthorization(params);
+  primarySessionId = oauthSession.info.sub;
 }
 
-const oauthSession = await loadOAuthSession();
-if (oauthSession !== undefined) session = await loadSession(oauthSession);
+for (const sessionId of oauth.listStoredSessions()) {
+  const oauthSession = await oauth.getSession(sessionId);
+  const sessionObj = loadSession(oauthSession);
+  sessions.push(sessionObj);
+  if (sessionId === primarySessionId) session = sessionObj;
+}
 
 export function updateStoredSession() {
   if (session) localStorage.setItem("rainbow/last-used-session", session.did);
   else localStorage.removeItem("rainbow/last-used-session");
 }
-updateStoredSession();
+currentSession.subscribeImmediate(it => {
+  if (it !== undefined) updateStoredSession();
+});
