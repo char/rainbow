@@ -57,7 +57,7 @@ for (const sessionId of oauth.listStoredSessions()) {
   const oauthSession = await oauth.getSession(sessionId);
   const sessionObj = loadSession(oauthSession);
   sessions.push(sessionObj);
-  if (sessionId === primarySessionId) session = sessionObj;
+  if (sessionId === primarySessionId) currentSession.set(sessionObj);
 }
 
 export function updateStoredSession() {
