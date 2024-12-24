@@ -1,8 +1,11 @@
 {
   "version": "4",
   "specifiers": {
+    "jsr:@char/aftercare@0.2.0": "0.2.0",
     "jsr:@luca/esbuild-deno-loader@0.11": "0.11.0",
     "jsr:@std/bytes@^1.0.2": "1.0.2",
+    "jsr:@std/cli@1": "1.0.6",
+    "jsr:@std/dotenv@0.225": "0.225.2",
     "jsr:@std/dotenv@0.225.2": "0.225.2",
     "jsr:@std/encoding@^1.0.5": "1.0.5",
     "jsr:@std/path@1": "1.0.7",
@@ -18,6 +21,16 @@
     "npm:urlpattern-polyfill@*": "10.0.0"
   },
   "jsr": {
+    "@char/aftercare@0.2.0": {
+      "integrity": "9ca26dcd215ebf33401724a4f5438f2b155cc8c7b26c038074aa82d2a80c31f1",
+      "dependencies": [
+        "jsr:@luca/esbuild-deno-loader",
+        "jsr:@std/cli",
+        "jsr:@std/dotenv@0.225",
+        "jsr:@std/path@1",
+        "npm:esbuild"
+      ]
+    },
     "@luca/esbuild-deno-loader@0.11.0": {
       "integrity": "c05a989aa7c4ee6992a27be5f15cfc5be12834cab7ff84cabb47313737c51a2c",
       "dependencies": [
@@ -28,6 +41,9 @@
     },
     "@std/bytes@1.0.2": {
       "integrity": "fbdee322bbd8c599a6af186a1603b3355e59a5fb1baa139f8f4c3c9a1b3e3d57"
+    },
+    "@std/cli@1.0.6": {
+      "integrity": "d22d8b38c66c666d7ad1f2a66c5b122da1704f985d3c47f01129f05abb6c5d3d"
     },
     "@std/dotenv@0.225.2": {
       "integrity": "e2025dce4de6c7bca21dece8baddd4262b09d5187217e231b033e088e0c4dd23"
