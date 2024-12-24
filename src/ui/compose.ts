@@ -36,7 +36,7 @@ export class Composer {
     this.box = elem("form", { className: "compose-box", lang: "en" }, [
       elem("p", {}, [
         "Posting as: ",
-        elem("strong", {}, []).also(it =>
+        elem("strong", {}, []).tap(it =>
           selfProfile.subscribeImmediate(p => (it.textContent = p.handle ?? p.did)),
         ),
       ]),

@@ -40,7 +40,7 @@ export function profileDetails(
     ]),
 
     profile.description
-      ? richText(profile.description, linkifyText(profile.description)).also(async it => {
+      ? richText(profile.description, linkifyText(profile.description)).tap(async it => {
           const description = profile.description!;
           const linkified = linkifyText(description);
           const parsed = await parseRichText(description, false);

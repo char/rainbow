@@ -27,7 +27,7 @@ export function nav(): HTMLElement {
     elem("a", { href: "/notifications", ariaDisabled: "true" }, [icon(Bell), "Notifications"]),
     elem("a", { href: "/feeds", ariaDisabled: "true" }, [icon(Hash), "Feeds"]),
 
-    elem("a", { href: "/profile/" + session?.did }, [icon(UserCircle), "Profile"]).also(it => {
+    elem("a", { href: "/profile/" + session?.did }, [icon(UserCircle), "Profile"]).tap(it => {
       selfProfile.subscribeImmediate(self => {
         it.href = `/profile/${self.handle === "handle.invalid" ? self.did : self.handle}`;
       });

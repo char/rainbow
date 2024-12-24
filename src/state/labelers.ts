@@ -34,7 +34,7 @@ async function fetchLabelerServices(dids: At.DID[]): Promise<LabelerServices> {
   });
   return data.views
     .map(it => [it.creator.did, it as AppBskyLabelerDefs.LabelerViewDetailed])
-    .tap(Object.fromEntries);
+    .pipe(Object.fromEntries);
 }
 
 export const labelOverrides = new Subscribable<LabelSetting[]>([]);
@@ -51,7 +51,7 @@ preferences.subscribe(prefs => {
 export let moderationRules: ModerationRules;
 function updateRules() {
   moderationRules = computeModerationRules(
-    labelerServices.get().tap(Object.values),
+    labelerServices.get().pipe(Object.values),
     labelOverrides.get(),
   );
 }

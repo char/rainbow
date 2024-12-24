@@ -66,7 +66,7 @@ export function embedQuote(record: AppBskyEmbedRecord.ViewRecord): HTMLElement {
         elem("div", {}, [age(new Date(quoteRecord.createdAt))]),
       ]),
       richText(quoteRecord.text, quoteRecord.facets),
-      ...(record.embeds?.tap(e => e.flatMap(embedMedia)) ?? []),
+      ...(record.embeds?.pipe(e => e.flatMap(embedMedia)) ?? []),
     ]),
   ]);
 }

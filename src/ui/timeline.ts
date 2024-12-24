@@ -69,7 +69,7 @@ export class Timeline {
 
   append(feed: AppBskyFeedDefs.FeedViewPost[]) {
     for (const feedPost of feed) {
-      const post = Post.get(feedPost.post, feedPost.reply?.parent?.tap(feedReply));
+      const post = Post.get(feedPost.post, feedPost.reply?.parent?.pipe(feedReply));
       const alreadyExisted = this.feedPosts.has(post.uri);
       this.feedPosts.set(post.uri, feedPost);
       if (!alreadyExisted) {
@@ -84,7 +84,7 @@ export class Timeline {
   prepend(feed: AppBskyFeedDefs.FeedViewPost[]) {
     const posts = [];
     for (const feedPost of feed) {
-      const post = Post.get(feedPost.post, feedPost.reply?.parent?.tap(feedReply));
+      const post = Post.get(feedPost.post, feedPost.reply?.parent?.pipe(feedReply));
       const alreadyExisted = this.feedPosts.has(post.uri);
       this.feedPosts.set(post.uri, feedPost);
       if (!alreadyExisted) posts.push(post);
@@ -132,7 +132,7 @@ export function timeline() {
 
     const timeline =
       timelines.get(route.alg) ??
-      (await createFeedTimeline(route.alg)).also(it => timelines.set(route.alg, it));
+      (await createFeedTimeline(route.alg)).tap(it => timelines.set(route.alg, it));
 
     if (currentTimeline === timeline) {
       fetchFeed(route.alg, undefined).then(res => {

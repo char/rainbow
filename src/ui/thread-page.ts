@@ -17,7 +17,7 @@ export function sortPosts(posts: Post[]) {
 export function buildThread(threadView: AppBskyFeedGetPostThread.Output["thread"]): Post {
   if (threadView.$type !== "app.bsky.feed.defs#threadViewPost") throw new Error("TODO");
 
-  const root = Post.get(threadView.post, threadView.parent?.tap(threadReply));
+  const root = Post.get(threadView.post, threadView.parent?.pipe(threadReply));
   setClass(root.article, "active", true);
 
   type ThreadData = { threadView: typeof threadView; post: Post };
@@ -32,7 +32,7 @@ export function buildThread(threadView: AppBskyFeedGetPostThread.Output["thread"
         threadView: current.threadView.parent,
         post: Post.get(
           current.threadView.parent.post,
-          current.threadView.parent.parent?.tap(threadReply),
+          current.threadView.parent.parent?.pipe(threadReply),
         ),
       };
     }
@@ -98,7 +98,7 @@ export function renderThread(page: HTMLElement, root: Post) {
 
   const addReplies = (post: Post) => {
     let isTopReply = true;
-    for (const child of [...post.hierarchy.replies].also(sortPosts)) {
+    for (const child of [...post.hierarchy.replies].tap(sortPosts)) {
       setClass(child.article, "active", false);
       setClass(child.article, "has-reply", child.hierarchy.replies.size);
 

@@ -22,7 +22,7 @@ export function computeModerationRules(
 
   const overridesMap: Partial<Record<string, LabelSetting>> = overrides
     .map(it => [it.labeler ? `${it.labeler}/${it.label}` : it.label, it])
-    .tap(Object.fromEntries);
+    .pipe(Object.fromEntries);
 
   for (const label of Object.values(GLOBAL_LABELS)) {
     const override = overridesMap[label.identifier];

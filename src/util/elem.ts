@@ -9,7 +9,7 @@ export type ElementProps<E extends Element> = {
 function removeUndefinedValues(x: object): object {
   return Object.entries(x)
     .filter(([_k, v]) => v !== undefined)
-    .tap(Object.fromEntries);
+    .pipe(Object.fromEntries);
 }
 
 export function elem<K extends keyof HTMLElementTagNameMap>(
@@ -19,7 +19,7 @@ export function elem<K extends keyof HTMLElementTagNameMap>(
   extras: { classList?: string[]; dataset?: Partial<Record<string, string>> } = {},
 ): HTMLElementTagNameMap[K] {
   const element = document.createElement(tag);
-  Object.assign(element, attrs.tap(removeUndefinedValues));
+  Object.assign(element, attrs.pipe(removeUndefinedValues));
   if (extras.classList) extras.classList.forEach(c => element.classList.add(c));
   if (extras.dataset)
     Object.entries(extras.dataset)

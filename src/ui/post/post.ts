@@ -40,8 +40,8 @@ export class Post {
   static get(post: AppBskyFeedDefs.PostView, reply?: PostReply) {
     const uri = normalizePostURI(post);
     return (
-      this.store.get(uri)?.also(p => p.update(post)) ??
-      new Post(post, reply).also(p => this.store.set(uri, p))
+      this.store.get(uri)?.tap(p => p.update(post)) ??
+      new Post(post, reply).tap(p => this.store.set(uri, p))
     );
   }
 
@@ -144,10 +144,10 @@ export class Post {
     return elem("section", { className: "controls" }, [
       elem("button", { className: "reply" }, [
         icon(MessageCircle),
-        elem("data").also(data =>
+        elem("data").tap(data =>
           this.replyCount.subscribeImmediate(count => (data.textContent = `${count}`)),
         ),
-      ]).also(button => {
+      ]).tap(button => {
         button.addEventListener("click", e => {
           e.preventDefault();
           e.stopPropagation();
@@ -158,10 +158,10 @@ export class Post {
       }),
       elem("button", { className: "repost" }, [
         icon(Repeat2),
-        elem("data").also(data =>
+        elem("data").tap(data =>
           this.repostCount.subscribeImmediate(count => (data.textContent = `${count}`)),
         ),
-      ]).also(button => {
+      ]).tap(button => {
         button.addEventListener("click", async e => {
           e.preventDefault();
           e.stopPropagation();
@@ -200,10 +200,10 @@ export class Post {
       }),
       elem("button", { className: "like" }, [
         icon(Heart),
-        elem("data").also(data =>
+        elem("data").tap(data =>
           this.likeCount.subscribeImmediate(count => (data.textContent = `${count}`)),
         ),
-      ]).also(button => {
+      ]).tap(button => {
         button.addEventListener("click", async e => {
           e.preventDefault();
           e.stopPropagation();
@@ -304,7 +304,7 @@ export function createPostArticle(post: Post): HTMLElement {
         : "",
       elem("section", { className: "post-body" }, [
         richText(record.text, record.facets),
-        ...(post.view.embed?.tap(embedMedia) ?? []),
+        ...(post.view.embed?.pipe(embedMedia) ?? []),
       ]),
     ]),
   ]);

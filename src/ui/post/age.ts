@@ -22,7 +22,7 @@ export function formatRelativeTime(before: Date, after: Date) {
 export function age(since: Date) {
   return elem("time", { dateTime: since.toISOString() }, [
     formatRelativeTime(since, new Date()),
-  ]).also(it => {
+  ]).tap(it => {
     let age = Date.now() - since.getTime();
     const periods = [
       [60 * 1000, 500],
