@@ -1,8 +1,8 @@
 import type { AppBskyActorGetProfile } from "@atcute/client/lexicons";
+import { LazySignal } from "@char/aftercare";
 import { session } from "../session.ts";
-import { LateSubscribable } from "../util/subscribable.ts";
 
-export const selfProfile = new LateSubscribable<AppBskyActorGetProfile.Output>();
+export const selfProfile = new LazySignal<AppBskyActorGetProfile.Output>();
 
 void (async () => {
   if (!session) return;

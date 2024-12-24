@@ -1,4 +1,5 @@
 import { AppBskyFeedPost } from "@atcute/client/lexicons";
+import { Signal } from "@char/aftercare";
 import { navigateTo, routeEarly } from "../navigation.ts";
 import { session } from "../session.ts";
 import { selfProfile } from "../state/profile.ts";
@@ -6,12 +7,11 @@ import { createRecord } from "../util/atp.ts";
 import { elem } from "../util/elem.ts";
 import { select } from "../util/select.ts";
 import { sleep } from "../util/sleep.ts";
-import { Subscribable } from "../util/subscribable.ts";
 import { createPostArticle, Post } from "./post/post.ts";
 import { parseRichText } from "./rich-text.ts";
 
 export class Composer {
-  static current = new Subscribable<Composer | undefined>(undefined);
+  static current = new Signal<Composer | undefined>(undefined);
 
   box: HTMLElement;
   modal: HTMLElement;

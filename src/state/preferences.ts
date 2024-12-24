@@ -1,8 +1,8 @@
 import type { AppBskyActorDefs } from "@atcute/client/lexicons";
+import { LazySignal } from "@char/aftercare";
 import { session } from "../session.ts";
-import { LateSubscribable } from "../util/subscribable.ts";
 
-export const preferences = new LateSubscribable<AppBskyActorDefs.Preferences>();
+export const preferences = new LazySignal<AppBskyActorDefs.Preferences>();
 export async function fetchPreferences() {
   if (!session) return;
 

@@ -1,4 +1,5 @@
 import type { AppBskyFeedDefs, AppBskyFeedPost, At } from "@atcute/client/lexicons";
+import { Signal } from "@char/aftercare";
 import { moderatePost, type ModerationResult } from "../../moderation/mod.ts";
 import { navigateTo } from "../../navigation.ts";
 import { session } from "../../session.ts";
@@ -7,7 +8,6 @@ import { createRecord, deleteRecord } from "../../util/atp.ts";
 import { elem, elemRewrite } from "../../util/elem.ts";
 import { Ellipsis, Heart, icon, MessageCircle, Pin, Repeat2, Reply } from "../../util/icons.ts";
 import { select } from "../../util/select.ts";
-import { Subscribable } from "../../util/subscribable.ts";
 import { Composer } from "../compose.ts";
 import { richText } from "../rich-text.ts";
 import { age } from "./age.ts";
@@ -53,12 +53,12 @@ export class Post {
 
   author: PostAuthor;
 
-  ownLike = new Subscribable<string | undefined>(undefined);
-  ownRepost = new Subscribable<string | undefined>(undefined);
+  ownLike = new Signal<string | undefined>(undefined);
+  ownRepost = new Signal<string | undefined>(undefined);
 
-  likeCount = new Subscribable(0);
-  repostCount = new Subscribable(0);
-  replyCount = new Subscribable(0);
+  likeCount = new Signal(0);
+  repostCount = new Signal(0);
+  replyCount = new Signal(0);
 
   replyComposer: Composer | undefined;
 

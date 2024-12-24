@@ -1,4 +1,4 @@
-import { Subscribable } from "./util/subscribable.ts";
+import { Signal } from "@char/aftercare";
 
 type R<Id extends string> = { id: Id };
 export type AppRoute =
@@ -12,8 +12,8 @@ export type AppRoute =
   | R<"not-found">
   | { id: "compose" };
 
-export const route = new Subscribable<AppRoute>({ id: "loading" });
-export const routeEarly = new Subscribable<{
+export const route = new Signal<AppRoute>({ id: "loading" });
+export const routeEarly = new Signal<{
   from?: string;
   to?: string;
   route: AppRoute;

@@ -1,8 +1,8 @@
 import * as atcute from "@atcute/client";
 import { mergeHeaders } from "@atcute/client/utils/http";
+import { Signal } from "@char/aftercare";
 import * as oauth from "npm:@atcute/oauth-browser-client@1";
 import { BSKY_MODERATION, labelerServiceIDs } from "./state/labelers.ts";
-import { Subscribable } from "./util/subscribable.ts";
 
 oauth.configureOAuth({
   metadata: {
@@ -39,7 +39,7 @@ const loadSession = (oauthSession: oauth.Session): Session => {
 };
 
 export const sessions: Session[] = [];
-export const currentSession = new Subscribable<Session | undefined>(undefined);
+export const currentSession = new Signal<Session | undefined>(undefined);
 export let session: Session | undefined; // sugared access
 currentSession.subscribe(it => (session = it));
 

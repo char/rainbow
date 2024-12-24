@@ -1,17 +1,17 @@
 import { At, type AppBskyLabelerDefs } from "@atcute/client/lexicons";
+import { Signal } from "@char/aftercare";
 import {
   computeModerationRules,
   type LabelSetting,
   type ModerationRules,
 } from "../moderation/mod.ts";
 import { session } from "../session.ts";
-import { Subscribable } from "../util/subscribable.ts";
 import { preferences } from "./preferences.ts";
 
 // TODO: set atproto-accept-labelers
 
 export const BSKY_MODERATION = `did:plc:ar7c4by46qjdydhdevvrndac`;
-export const labelerServiceIDs = new Subscribable<At.DID[]>([BSKY_MODERATION]);
+export const labelerServiceIDs = new Signal<At.DID[]>([BSKY_MODERATION]);
 preferences.subscribe(prefs => {
   for (const pref of prefs) {
     if (pref.$type === "app.bsky.actor.defs#labelersPref") {
@@ -21,7 +21,7 @@ preferences.subscribe(prefs => {
 });
 
 type LabelerServices = Record<At.DID, AppBskyLabelerDefs.LabelerViewDetailed>;
-export const labelerServices = new Subscribable<LabelerServices>(
+export const labelerServices = new Signal<LabelerServices>(
   await fetchLabelerServices(labelerServiceIDs.get()),
 );
 labelerServiceIDs.subscribe(async dids => {
@@ -37,7 +37,7 @@ async function fetchLabelerServices(dids: At.DID[]): Promise<LabelerServices> {
     .pipe(Object.fromEntries);
 }
 
-export const labelOverrides = new Subscribable<LabelSetting[]>([]);
+export const labelOverrides = new Signal<LabelSetting[]>([]);
 preferences.subscribe(prefs => {
   const overrides = prefs
     .filter(it => it.$type === "app.bsky.actor.defs#contentLabelPref")
