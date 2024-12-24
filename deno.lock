@@ -182,6 +182,7 @@
   },
   "workspace": {
     "dependencies": [
+      "jsr:@char/aftercare@0.2.0",
       "npm:@atcute/client@2"
     ]
   }
